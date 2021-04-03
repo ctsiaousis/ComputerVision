@@ -277,9 +277,10 @@ TSWLatexianTemp*
 
 *.pdf
 
-!*/data/*.png
-!*/data/*.bmp
 
 *.png
 *.bmp
 *.jpg
+
+!*/data/*.png
+!*/data/*.bmp
