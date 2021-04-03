@@ -10,8 +10,8 @@ close all; % closes all figures
 
 %% Setup
 % read images and convert to floating point format
-image1 = im2single(imread('pair1_einstein.bmp'));
-image2 = im2single(imread('pair1_marilyn.bmp'));
+image1 = im2single(imread('../data/pair1_einstein.bmp'));
+image2 = im2single(imread('../data/pair1_marilyn.bmp'));
 
 % Several additional test cases are provided for you, but feel free to make
 % your own (you'll need to align the images in a photo editor such as
