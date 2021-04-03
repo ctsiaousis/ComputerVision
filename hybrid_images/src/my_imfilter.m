@@ -29,12 +29,46 @@ function output = my_imfilter(image, filter)
 % % computation. It might be slow.
 % output = imfilter(image, filter);
 
+%% initialization
+    assert(ismatrix(filter), 'Filter must be 2D matrix');
+    h = rot90(filter, 2);               %filter rotation
+    [m n] = size(h);                    %dimentions of filter
+    [dummy actD] = size(size(image));   %dimentions of image
+    if actD == 3
+        [oL oC channels] = size(image); %original image is RGB
+    else
+        [oL oC] = size(image);          %original image is GRAY
+        channels = 1;
+    end
+    assert((-1^m == -1) && (-1^n == -1),'Filter dimentions must be odd');
+    lFilter = floor(m/2);
+    cFilter = floor(n/2);
+    pL = oL+2*lFilter;       %lines of padded image
+    pC = oC+2*cFilter;       %columns of padded image
 
-%%%%%%%%%%%%%%%%
-% Your code here
-%%%%%%%%%%%%%%%%
+%% zero-pad the image
+	padded = zeros(pL, pC, channels);
+    for chan = 1 : channels
+        for x = 1 + lFilter : oL + lFilter
+            for y = 1 + cFilter : oC + cFilter
+                padded(x,y,chan) = image(x - lFilter, y - cFilter, chan);
+            end
+        end
+    end
+    
+%% fill the output array with zeros
+    output = zeros( oL , oC , channels );
 
-
-
-
-
+%% convolute
+    for chan = 1 : channels
+        for i = 1 : oL
+            for j = 1 : oC
+                temp = padded(i:i+2*lFilter, j:j+2*cFilter, chan) .* h;
+                output(i,j, chan) = sum(sum(temp));
+            end
+        end
+    end
+    
+%% check results
+    assert(isequal(size(output), size(image)), 'Size mismatch, check it yourself');
+end

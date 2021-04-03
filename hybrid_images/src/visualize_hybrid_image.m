@@ -1,4 +1,4 @@
-function output = vis_hybrid_image(hybrid_image)
+function output = visualize_hybrid_image(hybrid_image)
 %visualize a hybrid image by progressively downsampling the image and
 %concatenating all of the images together.
 

@@ -10,8 +10,8 @@ close all; % closes all figures
 
 %% Setup
 % read images and convert to floating point format
-image1 = im2single(imread('../data/dog.bmp'));
-image2 = im2single(imread('../data/cat.bmp'));
+image1 = im2single(imread('pair1_einstein.bmp'));
+image2 = im2single(imread('pair1_marilyn.bmp'));
 
 % Several additional test cases are provided for you, but feel free to make
 % your own (you'll need to align the images in a photo editor such as
@@ -37,7 +37,7 @@ filter = fspecial('Gaussian', cutoff_frequency*4+1, cutoff_frequency);
 % blur that works best will vary with different image pairs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%low_frequencies = 
+low_frequencies = my_imfilter(image1, filter);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Remove the low frequencies from image2. The easiest way to do this is to
@@ -45,18 +45,20 @@ filter = fspecial('Gaussian', cutoff_frequency*4+1, cutoff_frequency);
 % This will give you an image centered at zero with negative values.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%high_frequencies = 
+blur2 = my_imfilter(image2, filter);
+high_frequencies = image2 - blur2;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Combine the high frequencies and low frequencies
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%hybrid_image = 
+hybrid_image = high_frequencies + low_frequencies;
+% hybrid_image = im2double(hybrid_image);
 
 %% Visualize and save outputs
 figure(1); imshow(low_frequencies)
 figure(2); imshow(high_frequencies + 0.5);
-vis = vis_hybrid_image(hybrid_image);
+vis = visualize_hybrid_image(hybrid_image);
 figure(3); imshow(vis);
 imwrite(low_frequencies, 'low_frequencies.jpg', 'quality', 95);
 imwrite(high_frequencies + 0.5, 'high_frequencies.jpg', 'quality', 95);
