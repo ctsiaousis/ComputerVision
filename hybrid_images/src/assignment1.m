@@ -23,8 +23,8 @@ image2 = im2single(imread('../data/pair2_HeathLedger.png'));
 % the cutoff frequency (half power point) in cycles/image
 cutoff_frequency1 = 5
 % the standard deviation in the frequency domain.
-% divide by 1.1774 because the cutoff frequency is the half power point
-sigma_freq1 = cutoff_frequency1 / 1.1774
+% divide by sqrt(2*log(2)) because the cutoff frequency is the half power point
+sigma_freq1 = cutoff_frequency1 / sqrt(2*log(2))
 N1 = size(image1, 1)
 % the standard deviation, in pixels, of the Gaussian blur
 % derived from the formula sigma * sigma_freq = N / (2*pi)
@@ -32,7 +32,7 @@ sigma1 = N1/(2*pi*sigma_freq1)
 filter1 = fspecial('Gaussian', floor(sigma1*2)*2+1, sigma1);
 
 cutoff_frequency2 = 12
-sigma_freq2 = cutoff_frequency2 / 1.1774
+sigma_freq2 = cutoff_frequency2 / sqrt(2*log(2))
 N2 = size(image2, 1)
 sigma2 = N2/(2*pi*sigma_freq2)
 filter2 = fspecial('Gaussian', floor(sigma2*2)*2+1, sigma2);
