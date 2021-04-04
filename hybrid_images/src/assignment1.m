@@ -10,8 +10,8 @@ close all; % closes all figures
 
 %% Setup
 % read images and convert to floating point format
-image1 = im2single(imread('../data/pair1_einstein.bmp'));
-image2 = im2single(imread('../data/pair1_marilyn.bmp'));
+image1 = im2single(imread('../data/pair2_joker.png'));
+image2 = im2single(imread('../data/pair2_HeathLedger.png'));
 
 % Several additional test cases are provided for you, but feel free to make
 % your own (you'll need to align the images in a photo editor such as
@@ -20,12 +20,22 @@ image2 = im2single(imread('../data/pair1_marilyn.bmp'));
 % you asign as image2 (which will provide the high frequencies)
 
 %% Filtering and Hybrid Image construction
-cutoff_frequency = 7; %This is the standard deviation, in pixels, of the 
-% Gaussian blur that will remove the high frequencies from one image and 
-% remove the low frequencies from another image (by subtracting a blurred
-% version from the original version). You will want to tune this for every
-% image pair to get the best results.
-filter = fspecial('Gaussian', cutoff_frequency*4+1, cutoff_frequency);
+% the cutoff frequency (half power point) in cycles/image
+cutoff_frequency1 = 5
+% the standard deviation in the frequency domain.
+% divide by 1.1774 because the cutoff frequency is the half power point
+sigma_freq1 = cutoff_frequency1 / 1.1774
+N1 = size(image1)(1)
+% the standard deviation, in pixels, of the Gaussian blur
+% derived from the formula sigma * sigma_freq = N / (2*pi)
+sigma1 = N1/(2*pi*sigma_freq1)
+filter1 = fspecial('Gaussian', floor(sigma1*2)*2+1, sigma1);
+
+cutoff_frequency2 = 12
+sigma_freq2 = cutoff_frequency2 / 1.1774
+N2 = size(image2)(1)
+sigma2 = N2/(2*pi*sigma_freq2)
+filter2 = fspecial('Gaussian', floor(sigma2*2)*2+1, sigma2);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % YOUR CODE BELOW. Use my_imfilter to create 'low_frequencies' and
@@ -37,7 +47,7 @@ filter = fspecial('Gaussian', cutoff_frequency*4+1, cutoff_frequency);
 % blur that works best will vary with different image pairs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-low_frequencies = my_imfilter(image1, filter);
+low_frequencies = my_imfilter(image1, filter1);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Remove the low frequencies from image2. The easiest way to do this is to
@@ -45,7 +55,7 @@ low_frequencies = my_imfilter(image1, filter);
 % This will give you an image centered at zero with negative values.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-blur2 = my_imfilter(image2, filter);
+blur2 = my_imfilter(image2, filter2);
 high_frequencies = image2 - blur2;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
