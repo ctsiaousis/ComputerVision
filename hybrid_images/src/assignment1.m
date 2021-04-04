@@ -20,10 +20,10 @@ image2 = im2single(imread('../data/pair2_HeathLedger.png'));
 % you asign as image2 (which will provide the high frequencies)
 
 %% Filtering and Hybrid Image construction
-% the cutoff frequency (half power point) in cycles/image
+% the cutoff frequency (half amplitude point) in cycles/image
 cutoff_frequency1 = 5
 % the standard deviation in the frequency domain.
-% divide by sqrt(2*log(2)) because the cutoff frequency is the half power point
+% divide by sqrt(2*log(2)) because the cutoff frequency is the half amplitude point
 sigma_freq1 = cutoff_frequency1 / sqrt(2*log(2))
 N1 = size(image1, 1)
 % the standard deviation, in pixels, of the Gaussian blur
