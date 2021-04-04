@@ -47,14 +47,34 @@
 \tableofcontents
 
 
+\section{Εισαγωγή}
 
-\section{A}
+\section{Υλοποίηση}
 
-\subsection{Ερώτημα Α.1}
+\subsection{Συνάρτηση my\_imfilter}
 
 %\matlabscript {file}{caption} %κληση του αρχείου χωρίς το .m
 
-\section{List of Figures}
+\subsection{Hybrid Images}
+
+\subsubsection{Συχνότητα αποκοπής}
+
+Ως συχνότητα αποκοπής $f_c$ θεωρούμε τη συχνότητα όπου το φίλτρο μειώνει το amplitude του σήματος στο μισό.
+
+Η συχνότητα αποκοπής για τιμή αποκοπής $1/c$ σχετίζεται με την τυπική απόκλιση στο πεδίο των συχνοτήτων με την εξής σχέση:
+\[f_c = \sqrt{2\ln(c)}\cdot\sigma_f\]
+
+Επειδή θέλουμε τιμή αποκοπής $1/2$ θα είναι $c = 2$.
+
+Λύνοντας ως προς $\sigma_f$ έχουμε:
+\[\sigma_f = \frac{f_c}{\sqrt{2\ln(2)}}\]
+
+Στη συνέχεια υπολογίζουμε την τυπική απόκλιση στο πεδίο του χώρου ($\sigma$) απο τη σχέση:
+\[\sigma\cdot\sigma_f=\frac{N}{2\pi}\]
+
+Η τυπική απόκλιση ($\sigma$) χρησιμοποιείται για τη δημιουργία του Gaussian φίλτρου.
+
+\section{Αποτελέσματα}
 
 % \listoffigures
 \end{document}
