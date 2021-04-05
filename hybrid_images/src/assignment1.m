@@ -20,8 +20,8 @@ image2 = im2single(imread('../data/pair2_HeathLedger.png'));
 % you asign as image2 (which will provide the high frequencies)
 
 % plot images in the frequency domain
-figure, imshow(log(abs(fftshift(fft2(image1)))));
-figure, imshow(log(abs(fftshift(fft2(image2)))));
+figure, imagesc(log(abs(fftshift(fft2(rgb2gray(image1))))));
+figure, imagesc(log(abs(fftshift(fft2(rgb2gray(image2))))));
 
 %% Filtering and Hybrid Image construction
 % the cutoff frequency (half amplitude point) in cycles/image
