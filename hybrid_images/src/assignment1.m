@@ -21,7 +21,10 @@ image2 = im2single(imread('../data/pair2_HeathLedger.png'));
 
 %% Filtering and Hybrid Image construction
 % the cutoff frequency (half amplitude point) in cycles/image
-cutoff_frequency1 = 5
+cutoff_frequency_avg = 11
+gap = 0.2
+
+cutoff_frequency1 = cutoff_frequency_avg * (1-gap)
 % calculate the standard deviation in the frequency domain
 % using the formula: \sigma_f = f_c / \sqrt{2\ln(c)}
 % for c = 2 because the cutoff frequency is the half amplitude point
@@ -32,7 +35,7 @@ N1 = size(image1, 1)
 sigma1 = N1/(2*pi*sigma_freq1)
 filter1 = fspecial('Gaussian', floor(sigma1*2)*2+1, sigma1);
 
-cutoff_frequency2 = 12
+cutoff_frequency2 = cutoff_frequency_avg * (1+gap)
 sigma_freq2 = cutoff_frequency2 / sqrt(2*log(2))
 N2 = size(image2, 1)
 sigma2 = N2/(2*pi*sigma_freq2)
