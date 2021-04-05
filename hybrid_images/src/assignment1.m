@@ -19,6 +19,10 @@ image2 = im2single(imread('../data/pair2_HeathLedger.png'));
 % assign as image1 (which will provide the low frequencies) and which image
 % you asign as image2 (which will provide the high frequencies)
 
+% plot images in the frequency domain
+figure, imshow(log(abs(fftshift(fft2(image1)))));
+figure, imshow(log(abs(fftshift(fft2(image2)))));
+
 %% Filtering and Hybrid Image construction
 % the cutoff frequency (half amplitude point) in cycles/image
 cutoff_frequency_avg = 11
@@ -70,10 +74,10 @@ hybrid_image = high_frequencies + low_frequencies;
 % hybrid_image = im2double(hybrid_image);
 
 %% Visualize and save outputs
-figure(1); imshow(low_frequencies)
-figure(2); imshow(high_frequencies + 0.5);
+figure; imshow(low_frequencies)
+figure; imshow(high_frequencies + 0.5);
 vis = visualize_hybrid_image(hybrid_image);
-figure(3); imshow(vis);
+figure; imshow(vis);
 imwrite(low_frequencies, 'low_frequencies.jpg', 'quality', 95);
 imwrite(high_frequencies + 0.5, 'high_frequencies.jpg', 'quality', 95);
 imwrite(hybrid_image, 'hybrid_image.jpg', 'quality', 95);
