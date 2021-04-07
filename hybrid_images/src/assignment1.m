@@ -10,8 +10,11 @@ close all; % closes all figures
 
 %% Setup
 % read images and convert to floating point format
-image1 = im2single(imread('../data/pair2_joker.png'));
-image2 = im2single(imread('../data/pair2_HeathLedger.png'));
+input_dir = '../data/';
+%files = {'pair1_marilyn.bmp', 'pair1_einstein.bmp'}
+files = {'pair2_joker.png', 'pair2_HeathLedger.png'};
+image1 = im2single(imread(strcat(input_dir, files{1})));
+image2 = im2single(imread(strcat(input_dir, files{2})));
 
 % Several additional test cases are provided for you, but feel free to make
 % your own (you'll need to align the images in a photo editor such as
@@ -78,7 +81,10 @@ figure; imshow(low_frequencies)
 figure; imshow(high_frequencies + 0.5);
 vis = visualize_hybrid_image(hybrid_image);
 figure; imshow(vis);
-imwrite(low_frequencies, 'low_frequencies.jpg', 'quality', 95);
-imwrite(high_frequencies + 0.5, 'high_frequencies.jpg', 'quality', 95);
-imwrite(hybrid_image, 'hybrid_image.jpg', 'quality', 95);
-imwrite(vis, 'hybrid_image_scales.jpg', 'quality', 95);
+% save files
+output_dir='./';
+output_format=strcat(output_dir, files{1}, '__', files{2}, '__%s__', 'fc', num2str(cutoff_frequency_avg), '_g', num2str(100*gap), '.jpg');
+imwrite(low_frequencies, sprintf(output_format, 'low_frequencies'), 'quality', 95);
+imwrite(high_frequencies + 0.5, sprintf(output_format, 'high_frequencies'), 'quality', 95);
+imwrite(hybrid_image, sprintf(output_format, 'hybrid_image'), 'quality', 95);
+imwrite(vis, sprintf(output_format, 'hybrid_image_scales'), 'quality', 95);
