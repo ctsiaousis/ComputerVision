@@ -82,7 +82,10 @@ figure; imshow(high_frequencies + 0.5);
 vis = visualize_hybrid_image(hybrid_image);
 figure; imshow(vis);
 % save files
-output_dir='./';
+output_dir='../output/';
+if not(isfolder(output_dir))
+    mkdir(output_dir)
+end
 output_format=strcat(output_dir, files{1}, '__', files{2}, '__%s__', 'fc', num2str(cutoff_frequency_avg), '_g', num2str(100*gap), '.jpg');
 imwrite(low_frequencies, sprintf(output_format, 'low_frequencies'), 'quality', 95);
 imwrite(high_frequencies + 0.5, sprintf(output_format, 'high_frequencies'), 'quality', 95);
