@@ -46,12 +46,43 @@ function output = my_imfilter(image, filter)
     pL = oL+2*lFilter;       %lines of padded image
     pC = oC+2*cFilter;       %columns of padded image
 
-%% zero-pad the image
-	padded = zeros(pL, pC, channels);
+%% symmetric padding
+    %padded = padarray(image, [lFilter cFilter], 'symmetric');
+    padded = zeros(pL, pC, channels);
     for chan = 1 : channels
+        % copy image to padded
         for x = 1 + lFilter : oL + lFilter
             for y = 1 + cFilter : oC + cFilter
                 padded(x,y,chan) = image(x - lFilter, y - cFilter, chan);
+            end
+        end
+
+	% calculate padding top rows
+        for x = 1 : lFilter
+            for y = 1 + cFilter : oC + cFilter
+                padded(x,y,chan) = image(1 + lFilter - x, y - cFilter, chan);
+            end
+        end
+	% calculate padding bottom rows
+        for x = 1 + oL + lFilter : pL
+            dx = x - (1 + oL + lFilter);
+            for y = 1 + cFilter : oC + cFilter
+                padded(x,y,chan) = image(oL - dx, y - cFilter, chan);
+            end
+        end
+
+	% calculate padding left columns
+        for x = 1 : pL
+            for y = 1 : cFilter
+                padded(x,y,chan) = padded(x, 1 + 2*cFilter - y, chan);
+            end
+        end
+	% calculate padding right columns
+        y1 = 1 + oC + cFilter;
+        for x = 1 : pL
+            for y = y1 : pC
+                dy = y - y1;
+                padded(x,y,chan) = padded(x, y1 - dy - 1, chan);
             end
         end
     end
