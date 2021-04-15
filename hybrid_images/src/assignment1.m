@@ -13,11 +13,11 @@ close all; % closes all figures
 input_dir = '../data/';
 
 %files = {'pair1_marilyn.bmp', 'pair1_einstein.bmp'}
-%files = {'pair1_einstein.bmp', 'pair1_marilyn.bmp'}
-%cutoff_frequency_avg = 17 % the cutoff frequency (half amplitude point) in cycles/image
+% files = {'pair1_einstein.bmp', 'pair1_marilyn.bmp'}
+% cutoff_frequency_avg = 17 % the cutoff frequency (half amplitude point) in cycles/image
 
-%files = {'pair2_joker.png', 'pair2_HeathLedger.png'};
-%cutoff_frequency_avg = 11
+% files = {'pair2_joker.png', 'pair2_HeathLedger.png'};
+% cutoff_frequency_avg = 11
 
 files = {'pair3_kheops_pyramid.jpg', 'pair3_mayan_pyramid.jpg'};
 cutoff_frequency_avg = 15
@@ -90,7 +90,7 @@ vis = visualize_hybrid_image(hybrid_image);
 figure; imshow(vis);
 % save files
 output_dir='../output/';
-if not(isfolder(output_dir))
+if not(isdir(output_dir))
     mkdir(output_dir)
 end
 output_format=strcat(output_dir, files{1}, '__', files{2}, '__%s__', 'fc', num2str(cutoff_frequency_avg), '_g', num2str(100*gap), '.jpg');
