@@ -68,7 +68,7 @@
 
 Ως συχνότητα αποκοπής $f_c$ θεωρούμε τη συχνότητα όπου το gaussian φίλτρο μειώνει το amplitude του σήματος στο μισό.
 
-Η συχνότητα αποκοπής για τιμή αποκοπής $1/c$ σχετίζεται με την τυπική απόκλιση στο πεδίο των συχνοτήτων με την εξής σχέση:
+Η συχνότητα αποκοπής για τιμή αποκοπής $1/c$ σχετίζεται με την τυπική απόκλιση στο πεδίο των συχνοτήτων με την εξής σχέση \cite{wikipedia_gaussian_filter}:
 \[f_c = \sqrt{2\ln(c)}\cdot\sigma_f\]
 
 Επειδή θέλουμε τιμή αποκοπής $1/2$ θα είναι $c = 2$.
@@ -144,6 +144,8 @@
 
 \subsection{Πυραμίδα του Χέοπα - El Castillo}
 
+Πέραν των εικόνων που μας δόθηκαν δοκιμάσαμε την ίδια τεχνική στην πυραμίδα του Χέοπα \cite{wikipedia_kheops} και το El Castillo \cite{britannica_el_castillo}. Επιλέξαμε αυτά γιατί έχουν παρόμοιο γεωμετρικό σχήμα που σημαίνει οτι θα υπάρχει καλό alignment των εικόνων.
+
 Ύστερα απο πειραματισμό επιλέξαμε συχνότητα αποκοπής $f_c = 15$ η οποία μας δίνει $\sigma = 5.57$ για το low pass και $\sigma = 3.71$ για το high pass φίλτρο.
 
 \begin{figure}[H]
@@ -183,4 +185,20 @@
 % ίσως και σχόλια για τα cutoff
 
 % \listoffigures
+\begin{thebibliography}{3}
+
+\bibitem{wikipedia_gaussian_filter}
+Wikipedia - Gaussian Filter,
+\url{https://en.wikipedia.org/w/index.php?title=Gaussian_filter&oldid=1016628269#Digital_implementation}
+
+\bibitem{wikipedia_kheops}
+Wikipedia - Great Pyramid of Giza,
+\url{https://en.wikipedia.org/w/index.php?title=Great_Pyramid_of_Giza&oldid=1018089268}
+
+\bibitem{britannica_el_castillo}
+Britannica - El Castillo,
+\url{https://www.britannica.com/place/El-Castillo}
+
+\end{thebibliography}
+
 \end{document}
