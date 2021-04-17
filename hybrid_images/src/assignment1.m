@@ -12,9 +12,9 @@ close all; % closes all figures
 % read images and convert to floating point format
 input_dir = '../data/';
 
-%files = {'pair1_marilyn.bmp', 'pair1_einstein.bmp'}
+% files = {'pair1_marilyn.bmp', 'pair1_einstein.bmp'}
 % files = {'pair1_einstein.bmp', 'pair1_marilyn.bmp'}
-% cutoff_frequency_avg = 17 % the cutoff frequency (half amplitude point) in cycles/image
+% cutoff_frequency_avg = 19 % the cutoff frequency (half amplitude point) in cycles/image
 
 % files = {'pair2_joker.png', 'pair2_HeathLedger.png'};
 % cutoff_frequency_avg = 11
