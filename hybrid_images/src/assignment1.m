@@ -31,10 +31,6 @@ image2 = im2single(imread(strcat(input_dir, files{2})));
 % assign as image1 (which will provide the low frequencies) and which image
 % you asign as image2 (which will provide the high frequencies)
 
-% plot images in the frequency domain
-%figure, imagesc(log(abs(fftshift(fft2(rgb2gray(image1))))));
-%figure, imagesc(log(abs(fftshift(fft2(rgb2gray(image2))))));
-
 %% Filtering and Hybrid Image construction
 gap = 0.2
 
