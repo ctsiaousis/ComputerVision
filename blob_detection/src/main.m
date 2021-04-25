@@ -7,10 +7,11 @@ k = sqrt(2); % value recommended by Lowe
 
 % create laplacian of gaussian filters for different values of sigma: sigma, k*sigma, k^2*sigma, ...
 log_filters = cell(scales_per_octave, 1);
-for k_power = 0:scales_per_octave-1
+for i = 1:scales_per_octave
+    k_power = i-1;
     sigma_prime = k^k_power * sigma;
-    log_filters{k_power+1} = ((k - 1) * sigma_prime^2) * fspecial('log', floor(4*sigma_prime) * 2 + 1, sigma_prime);
-    figure, mesh(log_filters{k_power+1});
+    log_filters{i} = ((k - 1) * sigma_prime^2) * fspecial('log', floor(4*sigma_prime) * 2 + 1, sigma_prime);
+    figure, mesh(log_filters{i});
 end
 
 scale_space = cell(num_of_octaves * scales_per_octave, 1);
