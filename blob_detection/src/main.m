@@ -17,7 +17,8 @@ end
 
 scale_space = cell(n, 1);
 
-I2 = I;
+% Lowe: "We double the size of the input image using linear inter-polation prior to building the first level of the pyramid"
+I2 = imresize(I, 2, 'bilinear');
 for i = 1:num_of_octaves
     for j = 1:scales_per_octave
         index = (i-1)*scales_per_octave + j;
