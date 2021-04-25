@@ -2,6 +2,7 @@ I = im2double(rgb2gray(imread('../data/fishes.jpg')));
 
 num_of_octaves = 4;
 scales_per_octave = 3; % value recommended by Lowe
+n = num_of_octaves * scales_per_octave; % numbers of levels in scale space
 sigma = 1.6; % value recommended by Lowe
 k = sqrt(2); % value recommended by Lowe
 
@@ -14,7 +15,7 @@ for i = 1:scales_per_octave
     figure, mesh(log_filters{i});
 end
 
-scale_space = cell(num_of_octaves * scales_per_octave, 1);
+scale_space = cell(n, 1);
 
 I2 = I;
 for i = 1:num_of_octaves
