@@ -25,7 +25,6 @@ for i = 1:num_of_octaves
         scale_space{index} = imfilter(I2, log_filters{j}, 'same', 'conv');
         figure, imshow(scale_space{index}, []);
     end
-    % downsample the 3rd image of this octave because the 3rd image has sigma_prime = k^2*sigma = 2*sigma
-    % Lowe: "Once a complete octave has been processed, we resample the Gaussian image that has twice the initial value of \sigma"
-    I2 = scale_space{(i-1)*scales_per_octave + 3}(2:2:end, 2:2:end);
+    % Lowe: "Once a complete octave has been processed, we resample the Gaussian image that has twice the initial value of \sigma by taking every second pixel in each row and column"
+    I2 = reduce(I2, 2*sigma);
 end
