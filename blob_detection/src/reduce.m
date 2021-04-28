@@ -4,5 +4,5 @@ function [out] = reduce(I, sigma)
     % convolve image with filter
     Ifiltered = imfilter(I, K, 'same', 'conv');
     % downsample
-    out = Ifiltered(2:2:end, 2:2:end);
+    out = Ifiltered(1:2:end, 1:2:end);
 end
