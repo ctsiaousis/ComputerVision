@@ -17,15 +17,14 @@ for i = 1:log_scales_per_octave
     figure, mesh(log_filters{i});
 end
 
-scale_space = cell(n, 1);
+scale_space = cell(num_of_octaves, log_scales_per_octave);
 
 % Lowe: "We double the size of the input image using linear interpolation prior to building the first level of the pyramid"
 I2 = imresize(I, 2, 'bilinear');
 for o = 1:num_of_octaves
     for i = 1:log_scales_per_octave
-        index = (o-1)*log_scales_per_octave + i;
-        scale_space{index} = imfilter(I2, log_filters{i}, 'same', 'conv');
-        figure, imshow(scale_space{index}, []);
+        scale_space{o, i} = imfilter(I2, log_filters{i}, 'same', 'conv');
+        figure, imshow(scale_space{o, i}, []);
     end
     % Lowe: "Once a complete octave has been processed, we resample the Gaussian image that has twice the initial value of \sigma by taking every second pixel in each row and column"
     I2 = reduce(I2, 2*sigma);
