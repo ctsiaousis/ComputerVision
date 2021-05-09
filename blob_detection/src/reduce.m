@@ -1,6 +1,6 @@
 function [out] = reduce(I, sigma)
     % create gaussian filter
-    K = fspecial("gaussian", floor(4*sigma) * 2 + 1, sigma);
+    K = fspecial('gaussian', floor(4*sigma) * 2 + 1, sigma);
     % convolve image with filter
     Ifiltered = imfilter(I, K, 'same', 'conv');
     % downsample
