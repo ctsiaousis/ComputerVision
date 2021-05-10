@@ -4,7 +4,7 @@ function scale_space = generateScaleSpace(IMAGE, num_of_octaves, log_scales_per_
   if boolVis
     figure
     figCount = 1;
-  endif
+  end
   I2 = imresize(IMAGE, 2, 'bilinear');
   for o = 1:num_of_octaves
       for i = 1:log_scales_per_octave
@@ -13,9 +13,9 @@ function scale_space = generateScaleSpace(IMAGE, num_of_octaves, log_scales_per_
             subplot(num_of_octaves, log_scales_per_octave, figCount)
             imagesc(scale_space{o, i}, []);
             figCount = figCount+1;
-          endif
-      endfor
+          end
+      end
       % Lowe: "Once a complete octave has been processed, we resample the Gaussian image that has twice the initial value of \sigma by taking every second pixel in each row and column"
       I2 = reduce(I2, 2*sigma);
-  endfor
-endfunction
+  end
+end

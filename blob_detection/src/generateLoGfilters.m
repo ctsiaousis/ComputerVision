@@ -1,7 +1,7 @@
 function log_filters = generateLoGfilters(log_scales_per_octave, k, sigma, boolVis)
   if boolVis
     figure
-  endif
+  end
   log_filters = cell(log_scales_per_octave, 1);
   for i = 1:log_scales_per_octave
       k_power = i-1;
@@ -11,6 +11,6 @@ function log_filters = generateLoGfilters(log_scales_per_octave, k, sigma, boolV
       if boolVis
         subplot(1, log_scales_per_octave, i)
         mesh(log_filters{i});
-      endif
+      end
   end
-endfunction
+end
