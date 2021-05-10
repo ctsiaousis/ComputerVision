@@ -11,7 +11,7 @@ function scale_space = generateScaleSpace(IMAGE, num_of_octaves, log_scales_per_
           scale_space{o, i} = imfilter(I2 , log_filters{i}, 'same', 'conv');
           if boolVis
             subplot(num_of_octaves, log_scales_per_octave, figCount)
-            imagesc(scale_space{o, i}, []);
+            imagesc(scale_space{o, i});
             figCount = figCount+1;
           end
       end

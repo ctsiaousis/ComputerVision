@@ -14,8 +14,6 @@ function extrema = generateExtrema(num_of_octaves, log_scales_per_octave, scale_
                                       scale_space{o, sc+1}(x-1:x+1, y-1:y+1));
                   % we now have 26 neighbors
                   sample_point = scale_space{o, sc}(x, y);
-                  disp(neighbors)
-                  disp(sample_point)
                   % compare each sample point with its 26 neighbors
                   % select it if it's larger than all of these neighbors or smaller than all of them
                   if sample_point > max(max(neighbors)) || sample_point < min(min(neighbors))
