@@ -2,7 +2,7 @@
 clc; close all; clear all;
 I = im2double(rgb2gray(imread('../data/fishes.jpg')));
 
-s = 2 % Lowe: "number of scales per octave at which the image function is
+s = 3 % Lowe: "number of scales per octave at which the image function is
       % sampled prior to extrema detection" "We choose to divide each octave
       %of scale space into an integer number, s, of intervals"
 k = 2^(1/s)
