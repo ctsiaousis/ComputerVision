@@ -48,7 +48,7 @@ for i=1:num_of_octaves
         % allocate subplot slot
         subplot(log_scales_per_octave-2,num_of_octaves,figCount)
         figCount = figCount + 1;
-        %assert(~isempty(cx) && ~isempty(cy), 'Could not find non-zeros')
+        assert(~isempty(cx) && ~isempty(cy), 'Could not find non-zeros')
         % display blobs
         radii = k^(-sc) * sigma * ones(size(cy));
         show_all_circles(scale_space{i,sc}, cx, cy, radii)
