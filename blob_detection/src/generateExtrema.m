@@ -28,6 +28,17 @@ function extrema = generateExtrema(num_of_octaves, log_scales_per_octave, scale_
                       % if abs(Dxhat) < 0.03
                       %     continue
                       % end
+                      %
+                      % Eliminating Edge Responses
+                      Dxx = scale_space{o, sc}(x+1, y) - scale_space{o, sc}(x-1, y);
+                      Dyy = scale_space{o, sc}(x, y+1) - scale_space{o, sc}(x, y-1);
+                      Dxy = scale_space{o, sc}(x-1, y+1) - scale_space{o, sc}(x-1, y-1) - scale_space{o, sc}(x+1, y+1) + scale_space{o, sc}(x+1, y-1);
+                      TrH = Dxx + Dyy;
+                      DetH = Dxx*Dyy - Dxy^2;
+                      r = 10;
+                      if ((TrH^2 / DetH) >= (r+1)^2 / r)
+                          continue
+                      end
                       extrema{o}(x, y, sc-1) = 1;
                   end
               end
