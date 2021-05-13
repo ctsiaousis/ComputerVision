@@ -18,6 +18,16 @@ function extrema = generateExtrema(num_of_octaves, log_scales_per_octave, scale_
                   % compare each sample point with its 26 neighbors
                   % select it if it's larger than all of these neighbors or smaller than all of them
                   if sample_point > max(neighbors) || sample_point < min(neighbors)
+                      % reject unstable extrema with low contrast
+                      % dx = scale_space{o, sc}(x+1, y) - scale_space{o, sc}(x-1, y);
+                      % dy = scale_space{o, sc}(x, y+1) - scale_space{o, sc}(x, y-1);
+                      % ds = scale_space{o, sc+1}(x, y) - scale_space{o, sc-1}(x, y);
+                      % dD = [dx, dy, ds];
+                      % xhat = [???];
+                      % Dxhat = scale_space{o, sc}(x, y) + 0.5 * (dD * xhat);
+                      % if abs(Dxhat) < 0.03
+                      %     continue
+                      % end
                       extrema{o}(x, y, sc-1) = 1;
                   end
               end
