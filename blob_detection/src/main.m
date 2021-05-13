@@ -11,7 +11,7 @@ log_scales_per_octave = s+2 % s+3 gaussian scales => s+2 LoG scales
 n = num_of_octaves * log_scales_per_octave % number of levels in scale space
 sigma = 1.6; % value recommended by Lowe
 
-VIS = true;
+VIS = false;
 
 
 %% create (laplacian of gaussian) filters
@@ -51,7 +51,7 @@ for i=1:num_of_octaves
         assert(~isempty(cx) && ~isempty(cy), 'Could not find non-zeros')
         % display blobs
         radii = k^(-sc) * sigma * ones(size(cy));
-        show_all_circles(scale_space{i,sc}, cx, cy, radii)
+        show_all_circles(imresize(I, 1/i, 'bilinear'), cx, cy, radii)
     end
 end
 toc
