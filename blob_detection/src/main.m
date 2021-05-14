@@ -54,7 +54,8 @@ for i=1:num_of_octaves
     end
         % allocate subplot slot
         subplot(1,num_of_octaves,i)
-        show_all_circles(imresize(I, 1/i, 'bilinear'), cx, cy, radii)
+        % resize image by half in each octave. resize to double in first octave
+        show_all_circles(imresize(I, 2/2^(i-1), 'bilinear'), cx, cy, radii)
         clear cx; clear cy; clear radii;
 end
 toc
