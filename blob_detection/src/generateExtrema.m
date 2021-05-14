@@ -10,6 +10,12 @@ function extrema = generateExtrema(num_of_octaves, log_scales_per_octave, scale_
                   neighbors = tmpMid(:);
                   neighbors(5) = [];
                   % neighbors now contains 8 neighbors from the current layer
+                  % [optimization] check early for extrema in order to avoid finding all 26 neighbors
+                  % provides x2 speedup
+                  sample_point = scale_space{o, sc}(x, y);
+                  if sample_point <= max(neighbors) && sample_point >= min(neighbors)
+                      continue
+                  end
                   % we have to add 9 neighbors from the previous layer, and 9 neighbors from the next layer
                   tmpLow  = scale_space{o, sc-1}(x-1:x+1, y-1:y+1);
                   tmpHigh = scale_space{o, sc+1}(x-1:x+1, y-1:y+1);
@@ -17,7 +23,6 @@ function extrema = generateExtrema(num_of_octaves, log_scales_per_octave, scale_
                                       tmpLow(:), ...
                                       tmpHigh(:));
                   % we now have 26 neighbors
-                  sample_point = scale_space{o, sc}(x, y);
                   % compare each sample point with its 26 neighbors
                   % select it if it's larger than all of these neighbors or smaller than all of them
                   if sample_point > max(neighbors) || sample_point < min(neighbors)
