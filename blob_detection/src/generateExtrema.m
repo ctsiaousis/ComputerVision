@@ -10,6 +10,9 @@ function extrema = generateExtrema(num_of_octaves, log_scales_per_octave, scale_
                   neighbors = tmpMid(:);
                   neighbors(5) = [];
                   % neighbors now contains 8 neighbors from the current layer
+                  if x == 100 && y == 100
+                      fprintf("generateExtrema(): o = %d, sc = %d, x = %d, y = %d, sample_point = %s, neighbors = %s\n", o, sc, x, y, num2str(sample_point, 15), mat2str(neighbors, 15))
+                  end
                   % [optimization] check early for extrema in order to avoid finding all 26 neighbors
                   % provides x2 speedup
                   sample_point = scale_space{o, sc}(x, y);
@@ -26,6 +29,7 @@ function extrema = generateExtrema(num_of_octaves, log_scales_per_octave, scale_
                   % compare each sample point with its 26 neighbors
                   % select it if it's larger than all of these neighbors or smaller than all of them
                   if sample_point > max(neighbors) || sample_point < min(neighbors)
+                      fprintf("generateExtrema(): FOUND EXTREMUM o = %d, sc = %d, x = %d, y = %d, sample_point = %s, neighbors = %s\n", o, sc, x, y, num2str(sample_point, 15), mat2str(neighbors, 15))
                       % reject unstable extrema with low contrast
                       % dx = scale_space{o, sc}(x+1, y) - scale_space{o, sc}(x-1, y);
                       % dy = scale_space{o, sc}(x, y+1) - scale_space{o, sc}(x, y-1);
@@ -44,6 +48,7 @@ function extrema = generateExtrema(num_of_octaves, log_scales_per_octave, scale_
                       r = 10;
                       H = [Dxx Dxy; Dxy Dyy]; % Hessian matrix
                       if ((trace(H)^2 / det(H)) >= (r+1)^2 / r)
+                          fprintf("extremum rejected\n")
                           continue
                       end
                       extrema{o}(x, y, sc-1) = 1;
