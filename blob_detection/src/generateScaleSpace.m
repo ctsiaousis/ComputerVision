@@ -11,11 +11,13 @@ function scale_space = generateScaleSpace(IMAGE, num_of_octaves, log_scales_per_
           scale_space{o, i} = imfilter(I2 , log_filters{i}, 'same', 'conv');
           if boolVis
             subplot(num_of_octaves, log_scales_per_octave, figCount)
-            imagesc(scale_space{o, i});
+            imagesc(scale_space{o, i}); colormap gray; colorbar;
             figCount = figCount+1;
           end
       end
-      % Lowe: "Once a complete octave has been processed, we resample the Gaussian image that has twice the initial value of \sigma by taking every second pixel in each row and column"
+      % Lowe: "Once a complete octave has been processed, we resample
+      % the Gaussian image that has twice the initial value of \sigma
+      % by taking every second pixel in each row and column"
       I2 = reduce(I2, 2*sigma);
   end
 end
