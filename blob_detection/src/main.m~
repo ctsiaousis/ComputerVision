@@ -1,6 +1,6 @@
 %% Set-up
 clc; close all; clear all;
-I = im2double(rgb2gray(imread('../data/fishes.jpg')));
+I = im2double(rgb2gray(imread('../data/sunflowers.jpg')));
 
 s = 3 % Lowe: "number of scales per octave at which the image function is
       % sampled prior to extrema detection" "We choose to divide each octave
@@ -10,8 +10,6 @@ num_of_octaves = 3
 log_scales_per_octave = s+2 % s+3 gaussian scales => s+2 LoG scales
 n = num_of_octaves * log_scales_per_octave % number of levels in scale space
 sigma = 1.6; % value recommended by Lowe
-
-threshold = 0.07 % the percentage of accepted matches
 
 VIS = false;
 
@@ -34,15 +32,33 @@ toc
 %% Local Extrema Detection
 fprintf('Performing Local Extrema Detection\n')
 tic
-[extrema, cx, cy, radii] = generateExtrema(num_of_octaves, ...
-    log_scales_per_octave, scale_space, s, threshold);
+[extrema, cx, cy,  = generateExtrema(num_of_octaves, ...
+    log_scales_per_octave, scale_space, s);
 toc
 
 %% Display the results for each octave
 fprintf('Displaying blobs\n')
 tic
 figure
-show_all_circles(I, cy, cx, radii)
+show_all_circles(imresize(I, 2/2^(i-1), 'bilinear'), cx, cy, radii)
+% for i=1:num_of_octaves
+%     cx = []; cy = []; radii = [];
+%     for sc=2:log_scales_per_octave-1
+%         % find nonzero elements
+%         [scx, scy] = find(extrema{i}(:,:,sc-1));
+%         assert(~isempty(scx) && ~isempty(scy), 'Could not find non-zeros')
+%         % display blobs
+%         scradii = k^(sc) * sqrt(2) * sigma * ones(size(scy));
+%         cx = [cx; scx];
+%         cy = [cy; scy];
+%         radii = [radii; scradii];
+%     end
+%         % allocate subplot slot
+%         subplot(1,num_of_octaves,i)
+%         % resize image by half in each octave. resize to double in first octave
+%         show_all_circles(imresize(I, 2/2^(i-1), 'bilinear'), cx, cy, radii)
+%         clear cx; clear cy; clear radii;
+% end
 toc
 
 return

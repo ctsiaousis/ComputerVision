@@ -5,8 +5,7 @@ function [extrema, rowVector, colVector, radiusVector] = generateExtrema(num_of_
   for o = 1:num_of_octaves
       extrema{o} = zeros(size(scale_space{o, sc}, 1), size(scale_space{o, sc}, 2), s);
       for sc = 2:log_scales_per_octave-1
-          % calculate the threshold of the current scale
-          scThresh = threshold * max(max(scale_space{o, sc}));
+          scThresh = threshold * max(max(scale_space{o, sc}))
           for x = 2:size(scale_space{o, sc}, 1)-1
               for y = 2:size(scale_space{o, sc}, 2)-1
                   tmpMid  = scale_space{o, sc}(x-1:x+1, y-1:y+1);
@@ -16,7 +15,7 @@ function [extrema, rowVector, colVector, radiusVector] = generateExtrema(num_of_
                   % [optimization] check early for extrema in order to avoid finding all 26 neighbors
                   % provides x2 speedup
                   sample_point = scale_space{o, sc}(x, y);
-                  if sample_point >= min(neighbors) && sample_point <= max(neighbors)
+                  if sample_point <= max(neighbors) && sample_point >= min(neighbors)
                       continue
                   end
                   if sample_point <= -scThresh || sample_point >= scThresh
@@ -47,7 +46,7 @@ function [extrema, rowVector, colVector, radiusVector] = generateExtrema(num_of_
               
           end
           
-          [scx, scy] = find(extrema{o}(:,:,sc-1));
+          [scx, scy] = find(extrema{o}(:,:,sc-1))
           %first octave is times2, second is same, third is 1/2
           rowVector = [rowVector; scx .* (2^(o)/4)];
           colVector = [colVector; scy .* (2^(o)/4)];
