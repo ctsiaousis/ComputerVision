@@ -46,10 +46,10 @@ function [extrema, rowVector, colVector, radiusVector] = generateExtrema(num_of_
                   end
               end
           end
-          [scx, scy] = find(extrema{o}(:,:,sc-1))
+          [scx, scy] = find(extrema{o}(:,:,sc-1));
           %first octave is times2, second is same, third is 1/2
-          rowVector = [rowVector; scx .* (2^(o)/4)];
-          colVector = [colVector; scy .* (2^(o)/4)];
+          rowVector = [rowVector; scy .* (2^(o)/4)];
+          colVector = [colVector; scx .* (2^(o)/4)];
           radiusVector = [radiusVector; sqrt(2) * sc * ones(size(scy))];
       end
   end
