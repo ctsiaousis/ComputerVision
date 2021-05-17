@@ -11,9 +11,9 @@ log_scales_per_octave = s+2 % s+3 gaussian scales => s+2 LoG scales
 n = num_of_octaves * log_scales_per_octave % number of levels in scale space
 sigma = 1.6; % value recommended by Lowe
 
-threshold = 0.07 % the percentage of accepted matches
+threshold = 0.4 % the percentage of accepted matches
 
-VIS = false;
+VIS = true;
 
 
 %% create (laplacian of gaussian) filters
