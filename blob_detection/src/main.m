@@ -1,6 +1,6 @@
 %% Set-up
 clc; close all; clear all;
-fileName = 'otter.jpg';
+fileName = 'fishes.jpg';
 Irgb = imread(strcat('../data/',fileName));
 I = im2double(rgb2gray(Irgb));
 
