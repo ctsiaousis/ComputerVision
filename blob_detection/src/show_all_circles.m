@@ -1,5 +1,5 @@
 % Author: 
-% Peter Kovesi   
+% Peter Kovesi   (with minor modifications)
 % Department of Computer Science & Software Engineering
 % The University of Western Australia
 
@@ -30,5 +30,8 @@ theta = theta(ones(size(cx1,1),1),:);
 X = cx1+cos(theta).*rad1;
 Y = cy1+sin(theta).*rad1;
 line(X', Y', 'Color', color, 'LineWidth', ln_wid);
+for i=1:size(cx,1)
+    plot(cx(i), cy(i), 'Color', 'g', 'LineWidth', 1, 'Marker', '.');
+end
 
 title(sprintf('%d circles', size(cx,1)));
