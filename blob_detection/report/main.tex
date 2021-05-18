@@ -1,0 +1,102 @@
+\documentclass[11pt]{scrartcl} % Font size
+
+\input{structure.tex} % Include the file specifying the document structure and custom commands
+\input{matlab.tex}
+
+\usepackage{fontspec}
+\setmainfont{Tinos Nerd Font} %nice font for english and greek
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \includegraphics[width=0.9\textwidth]{logo_tuc.png}\par\vspace{1cm}
+    \normalfont\normalsize
+    \textsc{\textcolor[rgb]{0.66, 0.09, 0.19}{Ηλεκτρολόγων Μηχανικών και Μηχανικών Υπολογιστών}}\\ % Your university, school and/or department name(s)
+    \vspace{25pt} % Whitespace
+    %\textcolor[rgb]{0.66, 0.09, 0.19}{\rule{\linewidth}{0.5pt}}
+    \rule{\linewidth}{0.5pt}\\ % Thin top horizontal rule
+    \vspace{20pt} % Whitespace
+    {\Huge Μηχανική Όραση}\\ % The assignment title
+
+    {\huge Αναφορά Δεύτερου Project}\\ % The assignment title
+    \vspace{12pt} % Whitespace
+    \rule{\linewidth}{2pt}\\ % Thick bottom horizontal rule
+    \vspace{12pt} % Whitespace
+    \vspace{2cm}
+
+    {\LARGE{Τσιαούσης Χρήστος \hfill Μητσάκης Χαράλαμπος}
+        \par
+        \texttt{2016030017 \hfill 2006030075}
+        \par
+    }
+
+    \vfill
+    Διδάσκουσα
+
+    Ε. Δούτση
+
+    \vfill
+
+% Bottom of the page
+    {\large \today\par}
+\end{titlepage}
+
+\newpage
+% \tableofcontents
+
+
+\section{Εισαγωγή}
+
+\section{Υλοποίηση}
+
+\subsection{Δημιουργία φίλτρων και scale-space}
+
+Απο το paper του Lowe γνωρίζουμε ότι το scale-space μπορεί να υπολογιστεί με συνέλιξη της εικόνας με τη διαφορά δύο gaussian φίλτρων ως εξής:
+
+\[D(x,y,\sigma) = (G(x,y,k\sigma) − G(x,y,\sigma)) * I(x,y)\]
+
+Όμως η διαφορά δύο gaussian φίλτρων μπορεί να προσεγγυστεί απο το laplacian of gaussian ως εξής:
+
+\[G(x,y,k\sigma) − G(x,y,\sigma) \approx (k−1)\sigma^2 \nabla^2 G\]
+
+Άρα:
+
+\[D(x,y,\sigma) = ((k−1)\sigma^2 \nabla^2 G) * I(x,y)\]
+
+Επομένως δημιουργούμε φίλτρα με περιττές διαστάσεις ως εξής:
+
+\begin{verbatim}
+for i = 1:log_scales_per_octave
+  k_power = i-1;
+  sigma_prime = k^k_power * sigma;
+  log_filters{i} = (k - 1) * sigma_prime^2 * fspecial('log', floor(4*sigma_prime) * 2 + 1, sigma_prime);
+end
+\end{verbatim}
+
+Αντί να δημιουργούμε φίλτρα για όλα τα scales χωρίζουμε το scale-space σε οκτάβες.
+Κάθε οκτάβα αντιστοιχεί σε διπλασιασμό του $\sigma$.
+
+Η πρώτη εικόνα κάθε οκτάβας υπολογίζεται με υποδειγματοληψία.
+
+Κάθε οκτάβα περιέχει $s+2$ εικόνες.
+Οι 2 επιπλέον εικόνες υπάρχουν για να μπορέσουμε να κάνουμε αναζήτηση των extrema σε $s$ εικόνες όπως εξηγούμε παρακάτω (Εύρεση extrema).
+
+Το $k$ υπολογίζεται απο το $s$ ως εξής: $k = 2^{1/s}$ γιατί κάθε οκτάβα αντιστοιχεί σε διπλασιασμό του $\sigma$ και η οκτάβα χωρίζεται σε $s$ διαστήματα.
+
+Επιλέξαμε τις τιμές $s = 3$, $k = 2^{1/3}$.
+
+\subsection{Εύρεση extrema}
+
+Για να βρούμε τα τοπικά maxima και minima του scale-space συγκρίνουμε κάθε σημείο του scale-space με τα 26 γειτονικά του (8 απο το ίδιο scale + 9 απο το κατώτερο + 9 απο το ανώτερο scale).
+
+Απορρίπτουμε υποψήφια keypoints με τιμές κάτω απο ένα threshold.
+
+Επίσης απορρίπτουμε υποψήφια keypoints στα edges ελέγχοντας αν ισχύει η σχέση:
+\[\frac{Tr(H)^2}{Det(H)} < \frac{(r+1)^2}{r}\]
+
+\section{Αποτελέσματα}
+
+\section{Συμπεράσματα}
+
+\end{document}
