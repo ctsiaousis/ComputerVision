@@ -36,9 +36,13 @@ function [extrema, rowVector, colVector, radiusVector] = generateExtrema(num_of_
                       Dyy = scale_space{o, sc}(x, y+1) - 2*scale_space{o, sc}(x, y) + scale_space{o, sc}(x, y-1);
                       Dxy = scale_space{o, sc}(x-1, y+1) - scale_space{o, sc}(x-1, y-1) - scale_space{o, sc}(x+1, y+1) + scale_space{o, sc}(x+1, y-1);
                       r = 10;
-                      trH = Dxx + Dyy;
-                      detH = Dxx*Dyy - Dxy^2;
-                      if ((trH^2 / detH) >= (r+1)^2 / r)
+                      H = [Dxx Dxy; Dxy Dyy]; % Hessian matrix
+            Dyy = OctaveImageDiff{Octave,DiffMinMaxMapIndx+1}(Row+1,Col) - 2*OctaveImageDiff{Octave,DiffMinMaxMapIndx+1}(Row,Col) + OctaveImageDiff{Octave,DiffMinMaxMapIndx+1}(Row-1,Col);
+            Dxx = OctaveImageDiff{Octave,DiffMinMaxMapIndx+1}(Row,Col+1) - 2*OctaveImageDiff{Octave,DiffMinMaxMapIndx+1}(Row,Col) + OctaveImageDiff{Octave,DiffMinMaxMapIndx+1}(Row,Col-1);
+            Dxy = OctaveImageDiff{Octave,DiffMinMaxMapIndx+1}(Row-1,Col+1) - OctaveImageDiff{Octave,DiffMinMaxMapIndx+1}(Row-1,Col-1) - OctaveImageDiff{Octave,DiffMinMaxMapIndx+1}(Row+1,Col+1) + OctaveImageDiff{Octave,DiffMinMaxMapIndx+1}(Row+1,Col-1);
+            TrH = Dxx + Dyy;
+            DetH = Dxx*Dyy - Dxy^2;
+                      if ((trace(H)^2 / det(H)) >= (r+1)^2 / r)
 %                           fprintf('extremum rejected\n')
                           continue
                       end
