@@ -89,6 +89,12 @@ end
 Επιλέξαμε τις τιμές $\sigma = 1.6$, $k = 2^{1/3}$, $s = 3$ που είναι οι προτεινόμενες τιμές απο τον Lowe.
 Επίσης επιλέξαμε $3$ οκτάβες, άρα έχουμε $n = 3 \cdot 3 = 9$ επίπεδα στα οποία κάναμε αναζήτηση extrema.
 
+Το scale-space αποθηκεύεται σε ένα cell array με διαστάσεις $num\_of\_octaves \times s+2$
+\begin{verbatim}
+scale_space = cell(num_of_octaves, s+2);
+\end{verbatim}
+Κάθε στοιχείο του cell array περιέχει μια εικόνα.
+
 \subsection{Εύρεση extrema}
 
 Για να βρούμε τα τοπικά maxima και minima του scale-space συγκρίνουμε κάθε σημείο του scale-space με τα 26 γειτονικά του (8 απο το ίδιο scale + 9 απο το κατώτερο + 9 απο το ανώτερο scale).
