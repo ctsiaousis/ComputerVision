@@ -43,12 +43,23 @@
 \end{titlepage}
 
 \newpage
-% \tableofcontents
+
 
 
 \section{Εισαγωγή}
+Σκοπός της εργασίας ήταν η εύρεση αναγνωριστικών σημείων σε μία εικόνα χρησιμοποιώντας Λαπλασιανές πυραμίδες.
+Η γενική ιδέα είναι πως καθώς γίνεται όλο και περισσότερο blur στην εικόνα, τα πιο ισχυρά feature παραμένουν.
+Έτσι, συγκρίνοντας τις διαφοροποιήσεις κάποιου πίξελ με τα γειτονικά του στο χωρικό πεδίο, αλλά και στα γειτονικά
+επίπεδα, μπορεί κανείς να αποφανθεί για την σημαντικότητά του. Τέλος, υλοποιήσαμε ενδεικτικά και ένα console
+application σε \texttt{C++} που χρησιμοποιεί την \texttt{OpenCV4} και τρέχει τον αλγόριθμο \texttt{SURF} ο οποίος,
+όπως θα δούμε παρακάτω, βγάζει παρόμοια points αλλά τρέχει πολύ πιο γρήγορα. Αυτό οφείλεται σε α) διαφορές στον αλγόριθμο,
+β) βελτιστοποιήσεις στην υλοποίηση και γ) διαφορετική γλώσσα προγραμματισμού.
+
 
 \section{Υλοποίηση}
+Αν και η εκφώνηση περιείχε σημεία που εστίαζουν στην απόδοση, φάνηκε να έχουμε αρκετή ελευθερία κι έτσι επιλέξαμε
+να φτάσουμε όσο πιο κοντά μπορούμε στο paper του Lowe. Έγινε μεγάλη προσπάθεια κατανόησης των μαθηματικών και \textbf{δεν}
+έγινε χρήση εξωτερικών συναρτήσεων για την βασική λειτουργικότητα του αλγορίθμου.
 
 \subsection{Δημιουργία φίλτρων και scale-space}
 
@@ -77,6 +88,11 @@ end
 
 Επιλέξαμε περιττές διαστάσεις ώστε να έχουμε κεντρικό pixel και αυτό να συμπίπτει με το κέντρο της laplacian of gaussian καμπάνας.
 
+\begin{figure}[H]
+  \centerline{\includegraphics[width=24cm,trim={0 7cm 0 7cm},clip]{../output/filters.jpg}}
+  \caption{Τα φίλτρα για την LoG πυραμίδα.}
+\end{figure}
+
 Αντί να δημιουργούμε φίλτρα για όλα τα scales χωρίζουμε το scale-space σε οκτάβες.
 
 Η πρώτη εικόνα κάθε οκτάβας υπολογίζεται με υποδειγματοληψία της προηγούμενης οκτάβας στο $1/2$ του μεγέθους, εκτός απο την πρώτη οκτάβα που δημιουργείται με διπλασιασμό της αρχικής εικόνας με linear interpolation.
@@ -99,34 +115,52 @@ scale_space = cell(num_of_octaves, s+2);
 
 \subsection{Εύρεση extrema}
 
-Για να βρούμε τα τοπικά maxima και minima του scale-space (υποψήφια keypoints) συγκρίνουμε κάθε σημείο του scale-space με τα 26 γειτονικά του (8 απο το ίδιο scale + 9 απο το κατώτερο + 9 απο το ανώτερο scale).
+Για να βρούμε τα τοπικά maxima και minima του scale-space (υποψήφια keypoints) συγκρίνουμε κάθε σημείο του scale-space
+με τα 26 γειτονικά του (8 απο το ίδιο scale + 9 απο το κατώτερο + 9 απο το ανώτερο scale).
 
-Απορρίπτουμε υποψήφια keypoints με τιμές κοντά στο 0 κάτω απο ένα threshold.
+Αρχικά, για λόγους speedup, γίνεται σύγκριση μόνο με τους γείτονες του ίδιου επιπέδου, κι αν δεν είναι ο μεγαλύτερος ή ο
+μικρότερος, ο αλγόριθμος συνεχίζει αναζητόντας το επόμενο pixel \textit{(x,y)} του επιπέδου. Αλλιώς συγκρίνει και με τους
+γείτονες των γειτονικών επιπέδον κι αν είναι extrema τότε υπολογίζει τον \textbf{Hessian matrix}, όπως αυτός ορίζεται στο
+\textit{sextion 3.3} του Lowe. Το Keypoint θα απορριφθεί αν ισχύει η σχέση (για $r = 10$):
+\[\frac{Tr(H)^2}{Det(H)} >= \frac{(r+1)^2}{r}\]
 
-Επίσης απορρίπτουμε υποψήφια keypoints στα edges ελέγχοντας αν ισχύει η σχέση (για $r = 10$):
-\[\frac{Tr(H)^2}{Det(H)} < \frac{(r+1)^2}{r}\]
-
+Τέλος, αν η απόλυτη τιμή του \texttt{sample\_point} είναι \textbf{μεγαλύτερη} του \textbf{threshold} \textit{(Lowe: Algorithm 8)},
+τότε το σημείο θεωρείται extrema και εισάγεται στα διανύσματα των x, y που θα χρησιμοποιηθούν για την αναπαράσταση των KeyPoints.
+Η ακτίνα για τον κύκλο του κάθε σημείου υπολογίζεται από την σχέση $radius_{point} = scale_{point}\cdot octave_{point}$.
 \subsection{Απεικόνιση}
+
+Με την χρήση μίας boolean μεταβλητής μπορούμε να ελέγξουμε αν θα κάνουμε visualize τα φίλτρα και το scale\_space κι αυτό επιρρεάζει
+ελφρώς τον χρόνο εκτέλεσης. Ενδεικτικά, ένα scale space που παράχθηκε από την εικόνα \texttt{fishes.jpg} και με παραμέτρους που θα
+συζητηθούν στο επόμενο section, είναι το εξής:
+
+\begin{figure}[H]
+  \centerline{\includegraphics[width=20cm,clip]{../output/fishes_scales.jpg}}
+  \caption{Scale Space της εικόνας fishes.jpg.}
+\end{figure}
 
 \section{Αποτελέσματα}
 
+\subsection{fishes.jpg}
 \begin{figure}[H]
-  \centerline{\includegraphics[width=24cm,trim={0 5cm 0 5cm},clip]{../output/fishes.jpg}}
+  \centerline{\includegraphics[width=20cm,trim={0 5cm 0 5cm},clip]{../output/fishes.jpg}}
   \caption{}
 \end{figure}
 
+\subsection{sunflowers.jpg}
 \begin{figure}[H]
-  \centerline{\includegraphics[width=24cm,trim={0 3cm 0 3cm},clip]{../output/sunflowers.jpg}}
+  \centerline{\includegraphics[width=20cm,trim={0 3cm 0 3cm},clip]{../output/sunflowers.jpg}}
   \caption{}
 \end{figure}
 
+\subsection{otter.jpg}
 \begin{figure}[H]
-  \centerline{\includegraphics[width=24cm,trim={0 6cm 0 6cm},clip]{../output/yacht.jpg}}
+  \centerline{\includegraphics[width=20cm,trim={0 5cm 0 5cm},clip]{../output/otter.jpg}}
   \caption{}
 \end{figure}
 
+\subsection{plumeria.jpg}
 \begin{figure}[H]
-  \centerline{\includegraphics[width=24cm,trim={0 5cm 0 5cm},clip]{../output/otter.jpg}}
+  \centerline{\includegraphics[width=24cm,trim={0 6cm 0 6cm},clip]{../output/plumeria.jpg}}
   \caption{}
 \end{figure}
 
