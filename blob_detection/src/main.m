@@ -1,6 +1,6 @@
 %% Set-up
 clc; close all; clear all;
-fileName = 'fishes.jpg';
+fileName = 'otter.jpg';
 Irgb = imread(strcat('../data/',fileName));
 I = im2double(rgb2gray(Irgb));
 %% Blob-Detection parameters
@@ -13,8 +13,8 @@ log_scales_per_octave = s+2 % s+3 gaussian scales => s+2 LoG scales
 % number of levels in scale space: num_of_octaves * log_scales_per_octave
 sigma = 1.6; % 1.6 recommended by Lowe
 
-threshold = 0.018
-VIS = false; %for visualizing filters, octaves and scales
+threshold = 0.029
+VIS = true; %for visualizing filters, octaves and scales
 
 tStart = tic;
 %% create (laplacian of gaussian) filters
