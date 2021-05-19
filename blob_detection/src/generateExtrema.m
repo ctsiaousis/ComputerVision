@@ -1,4 +1,5 @@
-function [extrema, rowVector, colVector, radiusVector] = generateExtrema(num_of_octaves, log_scales_per_octave, scale_space, s, threshold)
+function [extrema, rowVector, colVector, radiusVector] = generateExtrema(num_of_octaves,...
+                                          log_scales_per_octave, scale_space, s, threshold)
   extrema = cell(num_of_octaves, 1);
   rowVector = []; colVector = []; radiusVector = [];
   r = 10;
@@ -14,8 +15,8 @@ function [extrema, rowVector, colVector, radiusVector] = generateExtrema(num_of_
                   sample_point = neighbors(5);
                   neighbors(5) = [];
                   % neighbors now contains 8 neighbors from the current layer
-                  % [optimization] check early for extrema in order to avoid finding all 26 neighbors
-                  % provides x2 speedup
+                  % [optimization] check early for extrema in order to avoid
+                  % finding all 26 neighbors.            provides x2 speedup
                   if sample_point > min(neighbors) && sample_point < max(neighbors)
                       continue
                   end
@@ -30,9 +31,13 @@ function [extrema, rowVector, colVector, radiusVector] = generateExtrema(num_of_
                   % or smaller than all of them
                   if sample_point >= max(neighbors) || sample_point <= min(neighbors)
                       % Lowe: 3.3: Eliminating Edge Responses
-                      Dxx = scale_space{o, sc}(x+1, y) + scale_space{o, sc}(x-1, y) - 2*scale_space{o, sc}(x, y);
-                      Dyy = scale_space{o, sc}(x, y+1) + scale_space{o, sc}(x, y-1) - 2*scale_space{o, sc}(x, y);
-                      Dxy = scale_space{o, sc}(x-1, y+1) - scale_space{o, sc}(x-1, y-1) - scale_space{o, sc}(x+1, y+1) + scale_space{o, sc}(x+1, y-1);
+                      Dxx = scale_space{o, sc}(x+1, y) + ...
+                            scale_space{o, sc}(x-1, y) - 2*scale_space{o, sc}(x, y);
+                      Dyy = scale_space{o, sc}(x, y+1) + ...
+                            scale_space{o, sc}(x, y-1) - 2*scale_space{o, sc}(x, y);
+                      Dxy = scale_space{o, sc}(x-1, y+1) - ...
+                            scale_space{o, sc}(x-1, y-1) - ...
+                            scale_space{o, sc}(x+1, y+1) + scale_space{o, sc}(x+1, y-1);
                       trH = Dxx + Dyy;
                       detH = Dxx*Dyy - Dxy^2;
                       if ((trH^2 / detH) >= hessianThreshold)
@@ -54,5 +59,5 @@ function [extrema, rowVector, colVector, radiusVector] = generateExtrema(num_of_
           end %for each x
       end %for each scale
   end %for each octave
-  
+
 end

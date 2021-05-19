@@ -140,30 +140,63 @@ scale_space = cell(num_of_octaves, s+2);
 
 \section{Αποτελέσματα}
 
+Για κάθε εικόνα έχουν επιλεχθεί σταθεροί παράμετροι και αλλάζουμε μόνο το threshold. Οι τιμές αυτές
+είναι ένα κράμα από το paper του Lowe και trial-and-error. Πιο συγκεκριμένα, έχουμε \textbf{6 octaves},
+\textbf{6 scales-per-octave}. Βάσει αυτών και της παραπάνω θεωρίας, μπορεί κανείς να καταλάβει ότι το s
+είναι 4 (6 - 2) και το $k=2^{\frac{1}{4}}$.
 \subsection{fishes.jpg}
 \begin{figure}[H]
   \centerline{\includegraphics[width=20cm,trim={0 5cm 0 5cm},clip]{../output/fishes.jpg}}
-  \caption{}
+  \caption{H αρχική εικόνα και τα KeyPoints επί της ασπρόμαυρης}
 \end{figure}
+
 
 \subsection{sunflowers.jpg}
 \begin{figure}[H]
   \centerline{\includegraphics[width=20cm,trim={0 3cm 0 3cm},clip]{../output/sunflowers.jpg}}
-  \caption{}
+  \caption{H αρχική εικόνα και τα KeyPoints επί της ασπρόμαυρης}
 \end{figure}
 
 \subsection{otter.jpg}
 \begin{figure}[H]
   \centerline{\includegraphics[width=20cm,trim={0 5cm 0 5cm},clip]{../output/otter.jpg}}
-  \caption{}
+  \caption{H αρχική εικόνα και τα KeyPoints επί της ασπρόμαυρης}
 \end{figure}
 
 \subsection{plumeria.jpg}
 \begin{figure}[H]
   \centerline{\includegraphics[width=24cm,trim={0 6cm 0 6cm},clip]{../output/plumeria.jpg}}
-  \caption{}
+  \caption{H αρχική εικόνα και τα KeyPoints επί της ασπρόμαυρης}
 \end{figure}
 
 \section{Συμπεράσματα}
 
+Όπως φαίνεται στις παραπάνω εικόνες, ο αλγόριθμος κάνει αρκετά καλή δουλεια στην αναγνώριση των KeyPoints.
+Ενδιαφέρον έχει να αναλύσει κανείς τις ακτίνες των κύκλων. Βλέπουμε πως τα σημαντικά points of interest
+(απότομες εναλλαγές σε χρώμα, edges και lines) συνήθως αναπαρηστούνται με μικρούς κύκλους.
+Οι κύκλοι μεγάλης ακτίνας είναι συνήθως σε (μεγαλύτερες) περιοχές με σταθερό χρώμα. Δηλαδή, αναγνωρίστηκαν ως
+KeyPoints σε μεγάλη οκτάβα και scale. Aυτό γίνεται κατανοητό παρατηρώντας το Scale-Space, καθώς με το
+blur και την αρκετά μικρή διάσταση (περίπου 20x30 pixel) είναι πιο πιθανό να αναγνωριστούν
+οι εναλλαγές σε μεγαλύτερες περιοχές.
+
+\subsection{Σύγκριση με γνωστούς αλγορίθμους}
+Τέλος βλέπουμε πως ο προτεινόμενος αλγόριθμος κάνει αρκετά καλή δουλειά, αφού με τις ίδιες ρυθμίσεις για
+octaves και layers, είμαστε αρκετά κοντά στο αποτέλεσμα του \texttt{SURF} και μάλιστα θα μπορούσε κανείς
+να πει πως ο δεύτερος έχει και μερικά στοιχεία false-positive, οπότε θα ήταν θεμητό να χρησιμοποιηθεί με
+κάποιον επιπλέον ταξινομητή για να χρησιμοποιήσει τα ``χρήσιμα'' keypoints.
+
+\begin{figure}[H]
+  \centerline{\includegraphics[width=18cm,clip]{../output/compare.jpg}}
+  \caption{Παρατηρήστε τις μαύρες περιοχές και την ύπαρξη false-positive από τον SURF}
+\end{figure}
+
+\subsection{Κώδικας}
+\matlabscript{../src/generateLoGfilters}{Η δημιουργία φίλτρων.}
+\matlabscript{../src/generateScaleSpace}{Η ανάλυση.}
+\matlabscript{../src/generateExtrema}{Η αναγνώρηση.}
+\matlabscript{../src/reduce}{To downsample.}
+\matlabscript{../src/main}{Πρόγραμμα οδηγός.}
+
+Τέλος ο κώδικας για τον SURF:
+\lstinputlisting[language=C++]{../src/openCV_cpp_SURF/main.cpp}{OpenCV-4, GNU/Linux compatible Makefile included}
 \end{document}
