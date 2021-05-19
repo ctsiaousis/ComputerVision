@@ -1,21 +1,20 @@
 %% Set-up
 clc; close all; clear all;
-fileName = 'otter.jpg';
+fileName = 'fishes.jpg';
 Irgb = imread(strcat('../data/',fileName));
 I = im2double(rgb2gray(Irgb));
-
-s = 3 % Lowe: "number of scales per octave at which the image function is
+%% Blob-Detection parameters
+s = 4 % Lowe: "number of scales per octave at which the image function is
       % sampled prior to extrema detection" "We choose to divide each octave
       % of scale space into an integer number, s, of intervals"
 k = 2^(1/s)
-num_of_octaves = 5
+num_of_octaves = 6
 log_scales_per_octave = s+2 % s+3 gaussian scales => s+2 LoG scales
-n = num_of_octaves * log_scales_per_octave % number of levels in scale space
-sigma = 1.6; % value recommended by Lowe
+% number of levels in scale space: num_of_octaves * log_scales_per_octave
+sigma = 1.6; % 1.6 recommended by Lowe
 
-threshold = 2/3 % the percentage of rejected matches
-
-VIS = false;
+threshold = 0.018
+VIS = false; %for visualizing filters, octaves and scales
 
 tStart = tic;
 %% create (laplacian of gaussian) filters
@@ -45,9 +44,10 @@ imshow(Irgb);
 title(sprintf('Original -- %s', fileName));
 subplot(1,2,2)
 show_all_circles(I, xPoints, yPoints, radii)
-xlabel(sprintf('octaves: %d, s: %d\nthreshold %.2f',...
-    num_of_octaves, s, threshold))
-zoom on;
+totalTime = toc(tStart);
+xlabel(sprintf(['octaves: %d, s: %d\nscales per octave: %d\nsigma: %.1f\n',...
+    'threshold %.3f\nexecution time: %.2f seconds'],...
+    num_of_octaves, s, log_scales_per_octave, sigma, threshold, totalTime))
 toc
-fprintf('Total excecution time is: %.2f seconds.\n',toc(tStart))
+fprintf('Total excecution time is: %.2f seconds.\n', totalTime)
 return
