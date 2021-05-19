@@ -14,7 +14,9 @@ function log_filters = generateLoGfilters(log_scales_per_octave, k, sigma, boolV
       
       if boolVis %only for visualization
         subplot(1, log_scales_per_octave, i)
-        mesh(log_filters{i});
+        s = mesh(log_filters{i});
+        s.FaceColor = 'interp';
+        set(gca, 'PlotBoxAspectRatio', [1,1,1])
       end
   end
 end

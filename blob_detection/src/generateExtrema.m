@@ -41,19 +41,17 @@ function [extrema, rowVector, colVector, radiusVector] = generateExtrema(num_of_
                       % Lowe, algorithm 8
                       if(abs(sample_point) >= threshold)
                           extrema{o}(x, y, sc-1) = 1;
+                          %first octave is times2, second is same, third is 1/2
+                          %so we map 1->1/2, 2->1, 3->2, 4->4, 5->8, etc...
+                          rowVector = [rowVector; y .* (2^(o)/4)];
+                          colVector = [colVector; x .* (2^(o)/4)];
+                          %bigger radius for bigger octave and scale, this means
+                          %the bigger cycle is a more persistant feature
+                          radiusVector = [radiusVector; sc * o];
                       end
                   end %if (possible extrema)
-              end %for y
-          end %for x
-          %after exploring scale_space find non-zero extrema
-          [scx, scy] = find(extrema{o}(:,:,sc-1));
-          %first octave is times2, second is same, third is 1/2
-          %so we map 1->1/2, 2->1, 3->2, 4->4, 5->8, etc...
-          rowVector = [rowVector; scy .* (2^(o)/4)];
-          colVector = [colVector; scx .* (2^(o)/4)];
-          %bigger radius for bigger octave and scale, this means
-          %the bigger cycle is a more persistant feature
-          radiusVector = [radiusVector; sc * o * ones(size(scy))];
+              end %for each y
+          end %for each x
       end %for each scale
   end %for each octave
   
