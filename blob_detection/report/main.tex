@@ -108,6 +108,21 @@ scale_space = cell(num_of_octaves, s+2);
 
 \subsection{Απεικόνιση}
 
+Όταν βρούμε ένα keypoint αποθηκεύουμε τις συντεταγμένες στις οποίες το βρήκαμε πολλαπλασιασμένες ανάλογα την οκτάβα στην οποία βρισκόμαστε:
+\[x' = x \cdot \frac{2^{o-1}}{2}\]
+\[y' = y \cdot \frac{2^{o-1}}{2}\]
+
+Πολλαπλασιάζουμε με $\frac{2^{o-1}}{2}$ γιατί σε κάθε οκτάβα οι διαστάσεις της εικόνας διαιρούμε με 2 αλλα στην πρώτη οκτάβα πολλαπλασιάζονται με 2.
+
+Επίσης αποθηκεύουμε την ακτίνα:
+\[r = k^{i-1} \sigma \cdot \frac{2^{o-1}}{2}\]
+
+\begin{verbatim}
+rowVector = [rowVector; y .* (2^(o)/4)];
+colVector = [colVector; x .* (2^(o)/4)];
+radiusVector = [radiusVector; k^(sc-1) * sigma * (2^(o)/4)];
+\end{verbatim}
+
 \section{Αποτελέσματα}
 
 \begin{figure}[H]
