@@ -124,7 +124,7 @@ scale_space = cell(num_of_octaves, s+2);
 \textit{section 3.3} του Otero\cite{otero}. Το Keypoint θα απορριφθεί αν ισχύει η σχέση (για $r = 10$):
 \[\frac{Tr(H)^2}{Det(H)} >= \frac{(r+1)^2}{r}\]
 
-Τέλος, αν η απόλυτη τιμή του \texttt{sample\_point} είναι \textbf{μεγαλύτερη} του \textbf{threshold} \textit{(Otero: Algorithm 8)}\cite{otero},
+Τέλος, αν η απόλυτη τιμή του \texttt{sample\_point} είναι \textbf{μεγαλύτερη} του \textbf{threshold} \textit{(Otero: Algorithm 5)}\cite{otero},
 τότε το σημείο θεωρείται extrema και εισάγεται στα διανύσματα των x, y που θα χρησιμοποιηθούν για την αναπαράσταση των KeyPoints.
 Η ακτίνα για τον κύκλο του κάθε σημείου υπολογίζεται από την σχέση $radius_{point} = scale_{point}\cdot octave_{point}$.
 \subsection{Απεικόνιση}
