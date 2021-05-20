@@ -53,13 +53,14 @@
 επίπεδα, μπορεί κανείς να αποφανθεί για την σημαντικότητά του. Τέλος, υλοποιήσαμε ενδεικτικά και ένα console
 application σε \texttt{C++} που χρησιμοποιεί την \texttt{OpenCV4} και τρέχει τον αλγόριθμο \texttt{SURF} ο οποίος,
 όπως θα δούμε παρακάτω, βγάζει παρόμοια points αλλά τρέχει πολύ πιο γρήγορα. Αυτό οφείλεται σε α) διαφορές στον αλγόριθμο,
-β) βελτιστοποιήσεις στην υλοποίηση και γ) διαφορετική γλώσσα προγραμματισμού.
+β) βελτιστοποιήσεις στην υλοποίηση και γ) διαφορετική γλώσσα προγραμματισμού. Όπως θα φανεί στο τέλος της αναφοράς,
+η \textbf{efficient} μέθοδος, έχει κοντινά αποτελέσματα με τον surf, απο άποψη τοποθεσίας των KeyPoints αλλά και χρονικά.
 
 
 \section{Υλοποίηση}
 Αν και η εκφώνηση περιείχε σημεία που εστίαζουν στην απόδοση, φάνηκε να έχουμε αρκετή ελευθερία κι έτσι επιλέξαμε
-να φτάσουμε όσο πιο κοντά μπορούμε στο paper του Lowe\cite{lowe}. Έγινε μεγάλη προσπάθεια κατανόησης των μαθηματικών και \textbf{δεν}
-έγινε χρήση εξωτερικών συναρτήσεων για την βασική λειτουργικότητα του αλγορίθμου.
+να φτάσουμε όσο πιο κοντά μπορούμε στο paper του Lowe\cite{lowe}. Έγινε μεγάλη προσπάθεια κατανόησης των μαθηματικών και \textbf{δεν
+έγινε χρήση εξωτερικών συναρτήσεων} (όπως \textit{find(), ordfilt2() κ.α.}) για την βασική λειτουργικότητα του αλγορίθμου.
 
 \subsection{Δημιουργία φίλτρων και scale-space}
 
@@ -91,6 +92,10 @@ end
 \begin{figure}[H]
   \centerline{\includegraphics[width=24cm,trim={0 7cm 0 7cm},clip]{../output/filters.jpg}}
   \caption{Τα φίλτρα για την LoG πυραμίδα.}
+\end{figure}
+\begin{figure}[H]
+  \centerline{\includegraphics[width=24cm,trim={0 7cm 0 7cm},clip]{../output/filters_efficient.jpg}}
+  \caption{Τo φίλτρo όταν ενεργοποιηθεί η μεταβλητή efficient.}
 \end{figure}
 
 Αντί να δημιουργούμε φίλτρα για όλα τα scales χωρίζουμε το scale-space σε οκτάβες.
@@ -127,8 +132,39 @@ scale_space = cell(num_of_octaves, s+2);
 Τέλος, αν η απόλυτη τιμή του \texttt{sample\_point} είναι \textbf{μεγαλύτερη} του \textbf{threshold} \textit{(Otero: Algorithm 5)}\cite{otero},
 τότε το σημείο θεωρείται extrema και εισάγεται στα διανύσματα των x, y που θα χρησιμοποιηθούν για την αναπαράσταση των KeyPoints.
 Η ακτίνα για τον κύκλο του κάθε σημείου υπολογίζεται από την σχέση $radius_{point} = scale_{point}\cdot octave_{point}$.
-\subsection{Απεικόνιση}
+\subsection{Απεικόνιση blobs}
 
+Όταν βρούμε ένα keypoint αποθηκεύουμε τις συντεταγμένες στις οποίες το βρήκαμε πολλαπλασιασμένες ανάλογα την οκτάβα ($ο$) στην οποία βρισκόμαστε:
+\[x' = x \cdot \frac{2^{o-1}}{2}\]
+\[y' = y \cdot \frac{2^{o-1}}{2}\]
+
+Πολλαπλασιάζουμε με $\frac{2^{o-1}}{2}$ γιατί σε κάθε οκτάβα οι διαστάσεις της εικόνας διαιρούνται με 2 αλλα στην πρώτη οκτάβα πολλαπλασιάζονται με 2.
+
+Επίσης αποθηκεύουμε την ακτίνα η οποία είναι το μέγεθος του φίλτρου στο scale ($i$) που βρισκόμαστε $k^{i-1} \sigma$
+πολλαπλασιασμένο με $\frac{2^{o-1}}{2}$:
+\[r = k^{i-1} \sigma \cdot \frac{2^{o-1}}{2}\]
+
+\begin{verbatim}
+rowVector = [rowVector; y .* (2^(o)/4)];
+colVector = [colVector; x .* (2^(o)/4)];
+radiusVector = [radiusVector; sqrt(2) * sigma * o * k^(sc-1)];
+\end{verbatim}
+
+Στην περίπτωση της \textbf{efficient μεθόδου}, το scale πρέπει να γίνει διαφορετικά.
+Αυτή είναι η μεγαλύτερη αστοχία του προτεινόμενου αλγορίθμου, καθώς βλέπουμε keypoints
+σε περιοχές που ιδανικά δε θα θέλαμε. Παρ` όλ' αυτά, δεν έχει να κάνει με την μέθοδο υλοποίησης,
+καθώς και με την συνάρτηση \textit{find()} και κάνοντας scale το επίπεδο των extrema, τα αποτελέσματα
+είναι παρόμοια. Εν πάσει περιπτώσει, κάνουμε scale βάσει των resize που γίνονται στην δημιουργία του
+scale space και προκύπτουν οι τύποι:
+\begin{verbatim}
+rowVector = [rowVector; y * (2^(o)) * (2^(sc))/4];
+colVector = [colVector; x * (2^(o)) * (2^(sc))/4];
+\end{verbatim}
+οι οποίοι κάνουν σωστοί διαμόρφωση των συντεταγμένων. Αυτό μπορούμε με σιγουριά να το πούμε, καθώς
+στην συνάρτηση \textit{show\_all\_circles.m} επιβεβαιώνεται πως τα κέντρα των κύκλων είναι εντός της
+εικόνας (δείτε κώδικα).
+
+\subsection{Μεταβλητές ελέγχου}
 Με την χρήση μίας boolean μεταβλητής μπορούμε να ελέγξουμε αν θα κάνουμε visualize τα φίλτρα και το scale\_space κι αυτό επιρρεάζει
 ελφρώς τον χρόνο εκτέλεσης. Ενδεικτικά, ένα scale space που παράχθηκε από την εικόνα \texttt{fishes.jpg} και με παραμέτρους που θα
 συζητηθούν στο επόμενο section, είναι το εξής:
@@ -136,6 +172,15 @@ scale_space = cell(num_of_octaves, s+2);
 \begin{figure}[H]
   \centerline{\includegraphics[width=20cm,clip]{../output/fishes_scales.jpg}}
   \caption{Scale Space της εικόνας fishes.jpg.}
+\end{figure}
+
+
+Με τη χρήση της boolean μεταβλητής efficient, διαλέγουμε τον τύπο του αλγορίθμου. Όταν ενεργοποιηθεί, τότε
+τα scales έχουν κι αυτά σταδιακά μικρότερο μέγεθος όπως και οι οκτάβες.
+
+\begin{figure}[H]
+  \centerline{\includegraphics[width=20cm,clip]{../output/fishes_scales_efficient.jpg}}
+  \caption{Scale Space της εικόνας fishes.jpg και χρήση αποδοτικής μεθόδου.}
 \end{figure}
 
 \section{Αποτελέσματα}
@@ -190,12 +235,25 @@ octaves και layers, είμαστε αρκετά κοντά στο αποτέ�
   \caption{Παρατηρήστε τις μαύρες περιοχές και την ύπαρξη false-positive από τον SURF}
 \end{figure}
 
+Κλείνοντας, να αναφέρουμε πως μπορεί κανεις να συμπεράνει, κάνοντας reverse engineering, ότι
+και ο αλγόριθμος SURF υλοποιεί resize του επιπέδου των scale κι αυτός είναι ο λόγος που αναγνωρίζονται
+kaypoints στα ``σκοτεινά'' σημεία της εικόνας, καθώς το low contrast rejection δε λειτουργεί στις
+πολύ μικρές εικόνες.
+
+\begin{figure}[H]
+  \centerline{\includegraphics[width=18cm,clip]{../output/fishes_efficient_like_SURF.jpg}}
+  \caption{Παρατηρήστε την ύπαρξη false-positive, όπως στο αποτέλεσμα του SURF}
+\end{figure}
+
+
+
 \subsection{Κώδικας}
 \matlabscript{../src/generateLoGfilters}{Η δημιουργία φίλτρων.}
 \matlabscript{../src/generateScaleSpace}{Η ανάλυση.}
 \matlabscript{../src/generateExtrema}{Η αναγνώρηση.}
 \matlabscript{../src/reduce}{To downsample.}
 \matlabscript{../src/main}{Πρόγραμμα οδηγός.}
+% \matlabscript{../src/show\_all\_circles}{Προβολή keypoint.}
 
 Τέλος ο κώδικας για τον SURF:
 \lstinputlisting[language=C++]{../src/openCV_cpp_SURF/main.cpp}{OpenCV-4, GNU/Linux compatible Makefile included}

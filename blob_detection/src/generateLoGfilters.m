@@ -1,4 +1,6 @@
-function log_filters = generateLoGfilters(log_scales_per_octave, k, sigma, boolVis)
+function log_filters = generateLoGfilters(log_scales_per_octave, ...
+                                            k, sigma, boolVis, ...
+                                            isEfficient)
   if boolVis %only for visualization
     figure
   end
@@ -12,11 +14,17 @@ function log_filters = generateLoGfilters(log_scales_per_octave, k, sigma, boolV
       log_filters{i} = (k - 1) * sigma_prime^2 * ...
           fspecial('log', floor(4*sigma_prime) * 2 + 1, sigma_prime);
       
-      if boolVis %only for visualization
+      if boolVis && ~isEfficient %only for visualization
         subplot(1, log_scales_per_octave, i)
         s = mesh(log_filters{i});
         s.FaceColor = 'interp';
         set(gca, 'PlotBoxAspectRatio', [1,1,1])
+      end
+      if isEfficient && boolVis
+        s = mesh(log_filters{i});
+        s.FaceColor = 'interp';
+        set(gca, 'PlotBoxAspectRatio', [1,1,1])
+        break
       end
   end
 end

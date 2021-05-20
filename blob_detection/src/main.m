@@ -1,6 +1,6 @@
 %% Set-up
 clc; close all; clear all;
-fileName = 'otter.jpg';
+fileName = 'fishes.jpg';
 Irgb = imread(strcat('../data/',fileName));
 I = im2double(rgb2gray(Irgb));
 %% Blob-Detection parameters
@@ -13,27 +13,29 @@ log_scales_per_octave = s+2 % s+3 gaussian scales => s+2 LoG scales
 % number of levels in scale space: num_of_octaves * log_scales_per_octave
 sigma = 1.6; % 1.6 recommended by Lowe
 
-threshold = 0.029
-VIS = true; %for visualizing filters, octaves and scales
+threshold = 0.018
+VIS = false; %for visualizing filters, octaves and scales
+efficient = true;
 
 tStart = tic;
 %% create (laplacian of gaussian) filters
 % for different values of sigma: sigma, k*sigma, k^2*sigma, ...
 fprintf('Generating LoG filters with visualization: %d\n', VIS)
 tic
-log_filters = generateLoGfilters(log_scales_per_octave, k, sigma, VIS);
+log_filters = generateLoGfilters(log_scales_per_octave, k, ...
+                sigma, VIS, efficient);
 toc
 %% Generate scale-space
 fprintf('Generating scale space with visualization: %d\n', VIS)
 tic
 scale_space = generateScaleSpace( I, num_of_octaves, ...
-    log_scales_per_octave, log_filters, sigma, VIS);
+    log_scales_per_octave, log_filters, sigma, efficient, VIS);
 toc
 %% Local Extrema Detection
 fprintf('Performing Local Extrema Detection\n')
 tic
 [extrema, xPoints, yPoints, radii] = generateExtrema(num_of_octaves, ...
-    log_scales_per_octave, scale_space, s, threshold);
+    log_scales_per_octave, scale_space, s, threshold, sigma, k, efficient);
 toc
 %% Display the results for each octave
 fprintf('Displaying blobs\n')
