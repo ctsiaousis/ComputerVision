@@ -6,10 +6,9 @@ function [extrema, rowVector, colVector, radiusVector] = ...
   rowVector = []; colVector = []; radiusVector = [];
   r = 10;
   hessianThreshold = (r+1)^2 / r;
-  sc = 2; %initialize for taking correct scale_space image
   for o = 1:num_of_octaves
-      extrema{o} = zeros(size(scale_space{o, sc}, 1), ...
-          size(scale_space{o, sc}, 2), s);
+      extrema{o} = zeros(size(scale_space{o, 1}, 1), ...
+          size(scale_space{o, 1}, 2), s);
       for sc = 2:log_scales_per_octave-1
           if isEfficient
               % in the efficient method sizes in the same octave can vary by 1 or 2 pixels
