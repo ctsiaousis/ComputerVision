@@ -11,14 +11,11 @@ function [extrema, rowVector, colVector, radiusVector] = ...
       extrema{o} = zeros(size(scale_space{o, sc}, 1), ...
           size(scale_space{o, sc}, 2), s);
       for sc = 2:log_scales_per_octave-1
-          if isEfficient %we need to count in the smaller dimension
-              xMin = 4;
-              yMin = 4;
-              xMax = size(scale_space{o, sc+1}, 1)-1;
-              yMax = size(scale_space{o, sc+1}, 2)-1;
+          if isEfficient
+              % in the efficient method sizes in the same octave can vary by 1 or 2 pixels
+              xMax = size(scale_space{o, sc}, 1)-3;
+              yMax = size(scale_space{o, sc}, 2)-3;
           else
-              xMin = 2;
-              yMin = 2;
               xMax = size(scale_space{o, sc}, 1)-1;
               yMax = size(scale_space{o, sc}, 2)-1;
           end
@@ -64,17 +61,10 @@ function [extrema, rowVector, colVector, radiusVector] = ...
                       % Otero, algorithm 8, reject low contrast keypoints
                       if(abs(sample_point) >= threshold)
                           extrema{o}(x, y, sc-1) = 1;
-                          if ~isEfficient %not efficient, scale by octaves only
-                              %first octave is times2, second is same, third is 1/2
-                              %so we map 1->1/2, 2->1, 3->2, 4->4, 5->8, etc...
-                              rowVector = [rowVector; y * (2^(o)/4)];
-                              colVector = [colVector; x * (2^(o)/4)];
-                          else %efficient, scale by both octaves and scales
-% uncomment for explanation
-% fprintf('o:%d, sc:%d, multiplier:%d\n',o,sc,(2^(o)) * (2^(sc))/4);
-                              rowVector = [rowVector; y * (2^(o)) * (2^(sc))/4];
-                              colVector = [colVector; x * (2^(o)) * (2^(sc))/4];
-                          end
+                          %first octave is times2, second is same, third is 1/2
+                          %so we map 1->1/2, 2->1, 3->2, 4->4, 5->8, etc...
+                          rowVector = [rowVector; y * (2^(o)/4)];
+                          colVector = [colVector; x * (2^(o)/4)];
                           %bigger radius for bigger octave and scale, this means
                           %the bigger cycle is a more persistant feature
                           radiusVector = [radiusVector;  sqrt(2) * ...
