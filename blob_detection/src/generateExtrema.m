@@ -9,15 +9,18 @@ function [extrema, rowVector, colVector, radiusVector] = ...
   for o = 1:num_of_octaves
       extrema{o} = zeros(size(scale_space{o, 1}, 1), ...
           size(scale_space{o, 1}, 2), s);
+      if isEfficient
+          % in the efficient method sizes in the same octave
+          % can vary by 1 or 2 pixels
+          % so we avoid the last 3 pixels in order to avoid
+          % going out of bounds in layers that are smaller
+          xMax = size(scale_space{o, 1}, 1)-3;
+          yMax = size(scale_space{o, 1}, 2)-3;
+      else
+          xMax = size(scale_space{o, 1}, 1)-1;
+          yMax = size(scale_space{o, 1}, 2)-1;
+      end
       for sc = 2:log_scales_per_octave-1
-          if isEfficient
-              % in the efficient method sizes in the same octave can vary by 1 or 2 pixels
-              xMax = size(scale_space{o, sc}, 1)-3;
-              yMax = size(scale_space{o, sc}, 2)-3;
-          else
-              xMax = size(scale_space{o, sc}, 1)-1;
-              yMax = size(scale_space{o, sc}, 2)-1;
-          end
           for x = 2:xMax
               for y = 2:yMax
                   tmpMid  = scale_space{o, sc}(x-1:x+1, y-1:y+1);
