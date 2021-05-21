@@ -29,7 +29,7 @@ toc
 fprintf('Generating scale space with visualization: %d\n', VIS)
 tic
 scale_space = generateScaleSpace( I, num_of_octaves, ...
-    log_scales_per_octave, log_filters, sigma, efficient, VIS);
+    log_scales_per_octave, log_filters, k, sigma, efficient, VIS);
 toc
 %% Local Extrema Detection
 fprintf('Performing Local Extrema Detection\n')
