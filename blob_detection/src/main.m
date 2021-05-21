@@ -15,7 +15,7 @@ sigma = 1.6; % 1.6 recommended by Lowe
 
 threshold = 0.018
 VIS = false; %for visualizing filters, octaves and scales
-efficient = true;
+efficient = false;
 
 tStart = tic;
 %% create (laplacian of gaussian) filters
