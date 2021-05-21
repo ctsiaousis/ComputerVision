@@ -145,13 +145,13 @@ scale_space = cell(num_of_octaves, s+2);
 Πολλαπλασιάζουμε με $\frac{2^{o-1}}{2}$ γιατί σε κάθε οκτάβα οι διαστάσεις της εικόνας διαιρούνται με 2 αλλα στην πρώτη οκτάβα πολλαπλασιάζονται με 2.
 
 Επίσης αποθηκεύουμε την ακτίνα η οποία είναι το μέγεθος του φίλτρου στο scale ($i$) που βρισκόμαστε $k^{i-1} \sigma$
-πολλαπλασιασμένο με $\frac{2^{o-1}}{2}$:
-\[r = k^{i-1} \sigma \cdot \frac{2^{o-1}}{2}\]
+πολλαπλασιασμένο με $\frac{2^{o-1}}{2}$ και επι μια σταθερά $\sqrt{2}$:
+\[r =  \sqrt{2} k^{i-1} \sigma \cdot \frac{2^{o-1}}{2}\]
 
 \begin{verbatim}
 rowVector = [rowVector; y .* (2^(o)/4)];
 colVector = [colVector; x .* (2^(o)/4)];
-radiusVector = [radiusVector; sqrt(2) * sigma * o * k^(sc-1)];
+radiusVector = [radiusVector; sqrt(2) * sigma * k^(sc-1) * (2^(o)/4)];
 \end{verbatim}
 
 \subsection{Μεταβλητές ελέγχου}

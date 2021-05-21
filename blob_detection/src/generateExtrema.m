@@ -70,7 +70,7 @@ function [extrema, rowVector, colVector, radiusVector] = ...
                           %bigger radius for bigger octave and scale, this means
                           %the bigger cycle is a more persistant feature
                           radiusVector = [radiusVector;  sqrt(2) * ...
-                                               sigma * o * k^(sc-1)];
+                                               sigma * k^(sc-1) * (2^(o)/4)];
                       end
                   end %if (possible extrema)
               end %for each y
