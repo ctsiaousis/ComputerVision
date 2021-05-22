@@ -147,7 +147,7 @@ scale_space = cell(num_of_octaves, s+2);
 \begin{verbatim}
 rowVector = [rowVector; y .* (2^(o)/4)];
 colVector = [colVector; x .* (2^(o)/4)];
-radiusVector = [radiusVector; sqrt(2) * sigma * o * k^(sc-1)];
+radiusVector = [radiusVector; sqrt(2) * sigma * k^(sc-1) * (2^(o)/4)];
 \end{verbatim}
 
 Στην περίπτωση της \textbf{efficient μεθόδου}, το scale πρέπει να γίνει διαφορετικά.
@@ -246,6 +246,16 @@ kaypoints στα ``σκοτεινά'' σημεία της εικόνας, καθ
 \end{figure}
 
 Τέλος, βλέπουμε πως η efficient μέθοδος τρέχει \textbf{περίπου 10 φορές πιο γρήγορα}.
+
+\vspace{1cm}
+\textit{Σημείωση:} έχει υλοποιηθεί και η efficient μέθοδος με upsampling του scale space
+έτσι ώστε να έχουν όλες οι κλίμακες το μέγεθος της οκτάβας. Με αυτό τον τρόπο δε χρειάζεται
+παραμετροποίηση η \texttt{generateExtrema} και αλλάζει μόνο ο χρόνος εκτέλεσης της \texttt{generateScaleSpace}.
+Παρ` όλ' αυτά η χρονική διαφορά δεν απέχει από την inefficient μέθοδο. Το rescale των γειτονικών
+scale στην \texttt{generateExtrema} δεν έγινε, αλλά δεν θα άλλαζε και πολύ τα αποτελέσματα καθως αν το
+\texttt{sample\_point} είναι extrema θα συνέχιζε να είναι, δηλαδή τα σωστά KeyPoints τα θα αναγνωριζόταν.
+Αυτός είναι και ο λόγος που υπάρχουν false positive (το οτι χωρίς resampling αναζητούμε σε μεγαλύτερες
+περιοχές που δεν θα έπρεπε).
 
 \vspace{4cm}
 \subsection{Κώδικας}
