@@ -43,12 +43,24 @@
 \end{titlepage}
 
 \newpage
-% \tableofcontents
+
 
 
 \section{Εισαγωγή}
+Σκοπός της εργασίας ήταν η εύρεση αναγνωριστικών σημείων σε μία εικόνα χρησιμοποιώντας Λαπλασιανές πυραμίδες.
+Η γενική ιδέα είναι πως καθώς γίνεται όλο και περισσότερο blur στην εικόνα, τα πιο ισχυρά feature παραμένουν.
+Έτσι, συγκρίνοντας τις διαφοροποιήσεις κάποιου πίξελ με τα γειτονικά του στο χωρικό πεδίο, αλλά και στα γειτονικά
+επίπεδα, μπορεί κανείς να αποφανθεί για την σημαντικότητά του. Τέλος, υλοποιήσαμε ενδεικτικά και ένα console
+application σε \texttt{C++} που χρησιμοποιεί την \texttt{OpenCV4} και τρέχει τον αλγόριθμο \texttt{SURF} ο οποίος,
+όπως θα δούμε παρακάτω, βγάζει παρόμοια points αλλά τρέχει πολύ πιο γρήγορα. Αυτό οφείλεται σε α) διαφορές στον αλγόριθμο,
+β) βελτιστοποιήσεις στην υλοποίηση και γ) διαφορετική γλώσσα προγραμματισμού. Όπως θα φανεί στο τέλος της αναφοράς,
+η \textbf{efficient} μέθοδος, έχει κοντινά αποτελέσματα με τον surf, απο άποψη τοποθεσίας των KeyPoints αλλά και χρονικά.
+
 
 \section{Υλοποίηση}
+Αν και η εκφώνηση περιείχε σημεία που εστίαζουν στην απόδοση, φάνηκε να έχουμε αρκετή ελευθερία κι έτσι επιλέξαμε
+να φτάσουμε όσο πιο κοντά μπορούμε στο paper του Lowe\cite{lowe}. Έγινε μεγάλη προσπάθεια κατανόησης των μαθηματικών και \textbf{δεν
+έγινε χρήση εξωτερικών συναρτήσεων} (όπως \textit{find(), ordfilt2() κ.α.}) για την βασική λειτουργικότητα του αλγορίθμου.
 
 \subsection{Δημιουργία φίλτρων και scale-space}
 
@@ -77,6 +89,15 @@ end
 
 Επιλέξαμε περιττές διαστάσεις ώστε να έχουμε κεντρικό pixel και αυτό να συμπίπτει με το κέντρο της laplacian of gaussian καμπάνας.
 
+\begin{figure}[H]
+  \centerline{\includegraphics[width=24cm,trim={0 7cm 0 7cm},clip]{../output/filters.jpg}}
+  \caption{Τα φίλτρα για την LoG πυραμίδα.}
+\end{figure}
+\begin{figure}[H]
+  \centerline{\includegraphics[width=24cm,trim={0 7cm 0 7cm},clip]{../output/filters_efficient.jpg}}
+  \caption{Τo φίλτρo όταν ενεργοποιηθεί η μεταβλητή efficient.}
+\end{figure}
+
 Αντί να δημιουργούμε φίλτρα για όλα τα scales χωρίζουμε το scale-space σε οκτάβες.
 
 Η πρώτη εικόνα κάθε οκτάβας υπολογίζεται με υποδειγματοληψία της προηγούμενης οκτάβας στο $1/2$ του μεγέθους, εκτός απο την πρώτη οκτάβα που δημιουργείται με διπλασιασμό της αρχικής εικόνας με linear interpolation.
@@ -89,7 +110,7 @@ end
 
 Το $k$ υπολογίζεται απο το $s$ ως εξής: $k = 2^{1/s}$ γιατί κάθε οκτάβα αντιστοιχεί σε διπλασιασμό του $\sigma$ και η οκτάβα χωρίζεται σε $s$ διαστήματα.
 
-Επιλέξαμε τις τιμές $\sigma = 1.6$, $k = 2^{1/3}$, $s = 3$ που είναι οι προτεινόμενες τιμές απο τον Lowe.
+Επιλέξαμε τις τιμές $\sigma = 1.6$, $k = 2^{1/3}$, $s = 3$ που είναι οι προτεινόμενες τιμές απο τον Lowe\cite{lowe}.
 Επίσης επιλέξαμε $3$ οκτάβες, άρα έχουμε $n = 3 \cdot 5 = 15$ επίπεδα στα οποία κάναμε αναζήτηση extrema.
 
 Το scale-space αποθηκεύεται σε ένα cell array με διαστάσεις $num\_of\_octaves \times (s+2)$ και κάθε στοιχείο του cell array περιέχει μια εικόνα.
@@ -99,13 +120,25 @@ scale_space = cell(num_of_octaves, s+2);
 
 \subsection{Εύρεση extrema}
 
-Για να βρούμε τα τοπικά maxima και minima του scale-space (υποψήφια keypoints) συγκρίνουμε κάθε σημείο του scale-space με τα 26 γειτονικά του (8 απο το ίδιο scale + 9 απο το κατώτερο + 9 απο το ανώτερο scale).
+Για να βρούμε τα τοπικά maxima και minima του scale-space (υποψήφια keypoints) συγκρίνουμε κάθε σημείο του scale-space
+με τα 26 γειτονικά του (8 απο το ίδιο scale + 9 απο το κατώτερο + 9 απο το ανώτερο scale).
 
-Απορρίπτουμε υποψήφια keypoints με τιμές κοντά στο 0 κάτω απο ένα threshold.
+Αρχικά, για λόγους speedup, γίνεται σύγκριση μόνο με τους γείτονες του ίδιου επιπέδου, κι αν δεν είναι ο μεγαλύτερος ή ο
+μικρότερος, ο αλγόριθμος συνεχίζει αναζητόντας το επόμενο pixel \textit{(x,y)} του επιπέδου. Αλλιώς συγκρίνει και με τους
+γείτονες των γειτονικών επιπέδον κι αν είναι extrema τότε υπολογίζει τον \textbf{Hessian matrix}, όπως αυτός ορίζεται στο
+\textit{section 3.3} του Otero\cite{otero}. Το Keypoint θα απορριφθεί αν ισχύει η σχέση (για $r = 10$):
+\[\frac{Tr(H)^2}{Det(H)} >= \frac{(r+1)^2}{r}\]
 
-Επίσης απορρίπτουμε υποψήφια keypoints στα edges ελέγχοντας αν ισχύει η σχέση (για $r = 10$):
-\[\frac{Tr(H)^2}{Det(H)} < \frac{(r+1)^2}{r}\]
+Τέλος, αν η απόλυτη τιμή του \texttt{sample\_point} είναι \textbf{μεγαλύτερη} του \textbf{threshold} \textit{(Otero: Algorithm 5)}\cite{otero},
+τότε το σημείο θεωρείται extrema και εισάγεται στα διανύσματα των x, y που θα χρησιμοποιηθούν για την αναπαράσταση των KeyPoints.
+Η ακτίνα για τον κύκλο του κάθε σημείου υπολογίζεται από την σχέση $radius_{point} = scale_{point}\cdot octave_{point}$.
+\subsection{Απεικόνιση blobs}
 
+Όταν βρούμε ένα keypoint αποθηκεύουμε τις συντεταγμένες στις οποίες το βρήκαμε πολλαπλασιασμένες ανάλογα την οκτάβα ($ο$) στην οποία βρισκόμαστε:
+\[x' = x \cdot \frac{2^{o-1}}{2}\]
+\[y' = y \cdot \frac{2^{o-1}}{2}\]
+
+Πολλαπλασιάζουμε με $\frac{2^{o-1}}{2}$ γιατί σε κάθε οκτάβα οι διαστάσεις της εικόνας διαιρούνται με 2 αλλα στην πρώτη οκτάβα πολλαπλασιάζονται με 2.
 \subsection{Απεικόνιση blobs}
 
 Όταν βρούμε ένα keypoint αποθηκεύουμε τις συντεταγμένες στις οποίες το βρήκαμε πολλαπλασιασμένες ανάλογα την οκτάβα ($ο$) στην οποία βρισκόμαστε:
@@ -114,37 +147,145 @@ scale_space = cell(num_of_octaves, s+2);
 
 Πολλαπλασιάζουμε με $\frac{2^{o-1}}{2}$ γιατί σε κάθε οκτάβα οι διαστάσεις της εικόνας διαιρούνται με 2 αλλα στην πρώτη οκτάβα πολλαπλασιάζονται με 2.
 
-Επίσης αποθηκεύουμε την ακτίνα η οποία είναι το μέγεθος του φίλτρου στο scale ($i$) που βρισκόμαστε $k^{i-1} \sigma$ πολλαπλασιασμένο με $\frac{2^{o-1}}{2}$:
+Επίσης αποθηκεύουμε την ακτίνα η οποία είναι το μέγεθος του φίλτρου στο scale ($i$) που βρισκόμαστε $k^{i-1} \sigma$
+πολλαπλασιασμένο με $\frac{2^{o-1}}{2}$:
 \[r = k^{i-1} \sigma \cdot \frac{2^{o-1}}{2}\]
 
 \begin{verbatim}
 rowVector = [rowVector; y .* (2^(o)/4)];
 colVector = [colVector; x .* (2^(o)/4)];
-radiusVector = [radiusVector; k^(sc-1) * sigma * (2^(o)/4)];
+radiusVector = [radiusVector; sqrt(2) * sigma * k^(sc-1) * (2^(o)/4)];
 \end{verbatim}
+
+Στην περίπτωση της \textbf{efficient μεθόδου}, το scale πρέπει να γίνει διαφορετικά.
+Αυτή είναι η μεγαλύτερη αστοχία του προτεινόμενου αλγορίθμου, καθώς βλέπουμε keypoints
+σε περιοχές που ιδανικά δε θα θέλαμε. Παρ` όλ' αυτά, δεν έχει να κάνει με την μέθοδο υλοποίησης,
+καθώς και με την συνάρτηση \textit{find()} και κάνοντας scale το επίπεδο των extrema, τα αποτελέσματα
+είναι παρόμοια. Εν πάσει περιπτώσει, κάνουμε scale βάσει των resize που γίνονται στην δημιουργία του
+scale space και προκύπτουν οι τύποι:
+\begin{verbatim}
+rowVector = [rowVector; y * (2^(o)) * (2^(sc))/4];
+colVector = [colVector; x * (2^(o)) * (2^(sc))/4];
+\end{verbatim}
+οι οποίοι κάνουν σωστοί διαμόρφωση των συντεταγμένων. Αυτό μπορούμε με σιγουριά να το πούμε, καθώς
+στην συνάρτηση \textit{show\_all\_circles.m} επιβεβαιώνεται πως τα κέντρα των κύκλων είναι εντός της
+εικόνας (δείτε κώδικα).
+
+\subsection{Μεταβλητές ελέγχου}
+Με την χρήση μίας boolean μεταβλητής μπορούμε να ελέγξουμε αν θα κάνουμε visualize τα φίλτρα και το scale\_space κι αυτό επιρρεάζει
+ελφρώς τον χρόνο εκτέλεσης. Ενδεικτικά, ένα scale space που παράχθηκε από την εικόνα \texttt{fishes.jpg} και με παραμέτρους που θα
+συζητηθούν στο επόμενο section, είναι το εξής:
+
+\begin{figure}[H]
+  \centerline{\includegraphics[width=20cm,clip]{../output/fishes_scales.jpg}}
+  \caption{Scale Space της εικόνας fishes.jpg.}
+\end{figure}
+
+
+Με τη χρήση της boolean μεταβλητής efficient, διαλέγουμε τον τύπο του αλγορίθμου. Όταν ενεργοποιηθεί, τότε
+τα scales έχουν κι αυτά σταδιακά μικρότερο μέγεθος όπως και οι οκτάβες.
+
+\begin{figure}[H]
+  \centerline{\includegraphics[width=20cm,clip]{../output/fishes_scales_efficient.jpg}}
+  \caption{Scale Space της εικόνας fishes.jpg και χρήση αποδοτικής μεθόδου.}
+\end{figure}
 
 \section{Αποτελέσματα}
 
+Για κάθε εικόνα έχουν επιλεχθεί σταθεροί παράμετροι και αλλάζουμε μόνο το threshold. Οι τιμές αυτές
+είναι ένα κράμα από το paper του Lowe και trial-and-error. Πιο συγκεκριμένα, έχουμε \textbf{6 octaves},
+\textbf{6 scales-per-octave}. Βάσει αυτών και της παραπάνω θεωρίας, μπορεί κανείς να καταλάβει ότι το s
+είναι 4 (6 - 2) και το $k=2^{\frac{1}{4}}$.
+\subsection{fishes.jpg}
 \begin{figure}[H]
-  \centerline{\includegraphics[width=24cm,trim={0 5cm 0 5cm},clip]{../output/fishes.jpg}}
-  \caption{}
+  \centerline{\includegraphics[width=20cm,trim={0 5cm 0 5cm},clip]{../output/fishes.jpg}}
+  \caption{H αρχική εικόνα και τα KeyPoints επί της ασπρόμαυρης}
 \end{figure}
 
+
+\subsection{sunflowers.jpg}
 \begin{figure}[H]
-  \centerline{\includegraphics[width=24cm,trim={0 3cm 0 3cm},clip]{../output/sunflowers.jpg}}
-  \caption{}
+  \centerline{\includegraphics[width=20cm,trim={0 3cm 0 3cm},clip]{../output/sunflowers.jpg}}
+  \caption{H αρχική εικόνα και τα KeyPoints επί της ασπρόμαυρης}
 \end{figure}
 
+\subsection{otter.jpg}
 \begin{figure}[H]
-  \centerline{\includegraphics[width=24cm,trim={0 6cm 0 6cm},clip]{../output/yacht.jpg}}
-  \caption{}
+  \centerline{\includegraphics[width=20cm,trim={0 5cm 0 5cm},clip]{../output/otter.jpg}}
+  \caption{H αρχική εικόνα και τα KeyPoints επί της ασπρόμαυρης}
 \end{figure}
 
+\subsection{plumeria.jpg}
 \begin{figure}[H]
-  \centerline{\includegraphics[width=24cm,trim={0 5cm 0 5cm},clip]{../output/otter.jpg}}
-  \caption{}
+  \centerline{\includegraphics[width=24cm,trim={0 6cm 0 6cm},clip]{../output/plumeria.jpg}}
+  \caption{H αρχική εικόνα και τα KeyPoints επί της ασπρόμαυρης}
 \end{figure}
 
 \section{Συμπεράσματα}
+
+Όπως φαίνεται στις παραπάνω εικόνες, ο αλγόριθμος κάνει αρκετά καλή δουλεια στην αναγνώριση των KeyPoints.
+Ενδιαφέρον έχει να αναλύσει κανείς τις ακτίνες των κύκλων. Βλέπουμε πως τα σημαντικά points of interest
+(απότομες εναλλαγές σε χρώμα, edges και lines) συνήθως αναπαρηστούνται με μικρούς κύκλους.
+Οι κύκλοι μεγάλης ακτίνας είναι συνήθως σε (μεγαλύτερες) περιοχές με σταθερό χρώμα. Δηλαδή, αναγνωρίστηκαν ως
+KeyPoints σε μεγάλη οκτάβα και scale. Aυτό γίνεται κατανοητό παρατηρώντας το Scale-Space, καθώς με το
+blur και την αρκετά μικρή διάσταση (περίπου 20x30 pixel) είναι πιο πιθανό να αναγνωριστούν
+οι εναλλαγές σε μεγαλύτερες περιοχές.
+
+\subsection{Σύγκριση με γνωστούς αλγορίθμους}
+Τέλος βλέπουμε πως ο προτεινόμενος αλγόριθμος κάνει αρκετά καλή δουλειά, αφού με τις ίδιες ρυθμίσεις για
+octaves και layers, είμαστε αρκετά κοντά στο αποτέλεσμα του \texttt{SURF} και μάλιστα θα μπορούσε κανείς
+να πει πως ο δεύτερος έχει και μερικά στοιχεία false-positive, οπότε θα ήταν θεμητό να χρησιμοποιηθεί με
+κάποιον επιπλέον ταξινομητή για να χρησιμοποιήσει τα ``χρήσιμα'' keypoints.
+
+\begin{figure}[H]
+  \centerline{\includegraphics[width=18cm,clip]{../output/compare.jpg}}
+  \caption{Παρατηρήστε τις μαύρες περιοχές και την ύπαρξη false-positive από τον SURF}
+\end{figure}
+
+Κλείνοντας, να αναφέρουμε πως μπορεί κανεις να συμπεράνει, κάνοντας reverse engineering, ότι
+και ο αλγόριθμος SURF υλοποιεί resize του επιπέδου των scale κι αυτός είναι ο λόγος που αναγνωρίζονται
+kaypoints στα ``σκοτεινά'' σημεία της εικόνας, καθώς το low contrast rejection δε λειτουργεί στις
+πολύ μικρές εικόνες.
+
+\begin{figure}[H]
+  \centerline{\includegraphics[width=18cm,clip]{../output/fishes_efficient_like_SURF.jpg}}
+  \caption{Παρατηρήστε την ύπαρξη false-positive, όπως στο αποτέλεσμα του SURF}
+\end{figure}
+
+Τέλος, βλέπουμε πως η efficient μέθοδος τρέχει \textbf{περίπου 10 φορές πιο γρήγορα}.
+
+\vspace{1cm}
+\textit{Σημείωση:} έχει υλοποιηθεί και η efficient μέθοδος με upsampling του scale space
+έτσι ώστε να έχουν όλες οι κλίμακες το μέγεθος της οκτάβας. Με αυτό τον τρόπο δε χρειάζεται
+παραμετροποίηση η \texttt{generateExtrema} και αλλάζει μόνο ο χρόνος εκτέλεσης της \texttt{generateScaleSpace}.
+Παρ` όλ' αυτά η χρονική διαφορά δεν απέχει από την inefficient μέθοδο. Το rescale των γειτονικών
+scale στην \texttt{generateExtrema} δεν έγινε, αλλά δεν θα άλλαζε και πολύ τα αποτελέσματα καθως αν το
+\texttt{sample\_point} είναι extrema θα συνέχιζε να είναι, δηλαδή τα σωστά KeyPoints τα θα αναγνωριζόταν.
+Αυτός είναι και ο λόγος που υπάρχουν false positive (το οτι χωρίς resampling αναζητούμε σε μεγαλύτερες
+περιοχές που δεν θα έπρεπε).
+
+\vspace{4cm}
+\subsection{Κώδικας}
+\matlabscript{../src/generateLoGfilters}{Η δημιουργία φίλτρων.}
+\matlabscript{../src/generateScaleSpace}{Η ανάλυση.}
+\matlabscript{../src/generateExtrema}{Η αναγνώρηση.}
+\matlabscript{../src/reduce}{To downsample.}
+\matlabscript{../src/main}{Πρόγραμμα οδηγός.}
+% \matlabscript{../src/show\_all\_circles}{Προβολή keypoint.}
+
+Τέλος ο κώδικας για τον SURF:
+\lstinputlisting[language=C++]{../src/openCV_cpp_SURF/main.cpp}{OpenCV-4, GNU/Linux compatible Makefile included}
+
+\begin{thebibliography}{2}
+
+\bibitem{lowe}
+DAVID G. LOWE, Distinctive Image Features from Scale-Invariant Keypoints,
+\url{https://www.cs.ubc.ca/~lowe/papers/ijcv04.pdf}
+
+\bibitem{otero}
+Ives Rey Otero, and Mauricio Delbracio, Anatomy of the SIFT Method, Image Processing On Line, 4 (2014), pp. 370–396.
+\url{https://doi.org/10.5201/ipol.2014.82}
+
+\end{thebibliography}
 
 \end{document}

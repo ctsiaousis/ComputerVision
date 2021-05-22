@@ -31,6 +31,8 @@ X = cx1+cos(theta).*rad1;
 Y = cy1+sin(theta).*rad1;
 line(X', Y', 'Color', color, 'LineWidth', ln_wid);
 for i=1:size(cx,1)
+    assert(cx(i)<=size(I,2),'point out of Image')
+    assert(cy(i)<=size(I,1),'point out of Image')
     plot(cx(i), cy(i), 'Color', 'g', 'LineWidth', 1, 'Marker', '.');
 end
 

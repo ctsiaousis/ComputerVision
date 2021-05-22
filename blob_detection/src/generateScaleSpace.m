@@ -1,17 +1,25 @@
-function scale_space = generateScaleSpace(IMAGE, num_of_octaves, log_scales_per_octave, log_filters, sigma, boolVis)
+function scale_space = generateScaleSpace(IMAGE, ...
+    num_of_octaves, log_scales_per_octave, log_filters, sigma, ...
+    isEfficient, boolVis)
   scale_space = cell(num_of_octaves, log_scales_per_octave);
-  % Lowe: "We double the size of the input image using linear interpolation prior to building the first level of the pyramid"
+  % Lowe: "We double the size of the input image using linear
+  % interpolation prior to building the first level of the pyramid"
   if boolVis %only for visualization
     figure
     figCount = 1;
   end
   I2 = imresize(IMAGE, 2, 'bilinear');
   for o = 1:num_of_octaves
+      I_scale = I2;
       for i = 1:log_scales_per_octave
           % filter the image of the octave with 
           % its corresponding log_filter
-          scale_space{o, i} = imfilter(I2 , log_filters{i}, 'same', 'conv');
-          
+          if ~isEfficient
+            scale_space{o, i} = imfilter(I_scale , log_filters{i}, 'same', 'conv');
+          else
+            scale_space{o, i} = imfilter(I_scale , log_filters{1}, 'same', 'conv');
+            I_scale = imresize(I_scale, 1/2, 'bilinear');
+          end
           if boolVis %only for visualization
               subplot(num_of_octaves, log_scales_per_octave, figCount)
               imagesc(scale_space{o, i}); colormap gray; colorbar;
