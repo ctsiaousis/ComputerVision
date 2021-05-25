@@ -18,7 +18,7 @@ dx = imfilter(I, F, 'replicate');
 dy = imfilter(I, F', 'replicate');
 
 mag = sqrt(dx.^2 + dy.^2);
-ori = atan2(-dy, dx); % -dy gives as the same orientation as imgradient
+ori = atan2(-dy, dx); % -dy gives us the same orientation as imgradient
 
 assert(all(size(mag)==size(I)),'gradient magnitudes should be same size as input image');
 assert(all(size(ori)==size(I)),'gradient orientations should be same size as input image');
