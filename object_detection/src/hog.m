@@ -13,7 +13,7 @@ w2 = ceil(w/8);
 nori = 9;       %number of orientation bins
 
 [mag,ori] = mygradient(I);
-thresh = 0.1 * max(mag(:)) %threshold for edges
+thresh = 0.1 * max(mag(:)); %threshold for edges
 
 
 % separate out pixels into orientation channels
@@ -64,7 +64,7 @@ for x = 1:h2
     s = sum(ohist(x, y, :));
     if s ~= 0
       ohist(x, y, :) = ohist(x, y, :) ./ s;
-      % assert(abs(sum(ohist(x, y, :)) - 1) < 2*eps);
+      assert(abs(sum(ohist(x, y, :)) - 1) < 2*eps);
     end
   end
 end

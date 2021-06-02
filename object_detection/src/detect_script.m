@@ -15,6 +15,7 @@ Itrain = im2double(rgb2gray(imread('../data/faces2.jpg')));
 nclick = 5;
 figure(1); clf;
 imshow(Itrain);
+title(sprintf('Select %d faces for the template',nclick));
 [x,y] = ginput(nclick); %get nclicks from the user
 
 %compute 8x8 block in which the user clicked
@@ -47,15 +48,16 @@ postemplate = postemplate/nclick;
 % examples.  (or alternately you can grab random locations
 % from an image that doesn't contain any instances of the
 % object you are trying to detect).
-negnclick = 2;
-figure(3);
+negnclick = 3;
+figure(3); clf;
 imshow(Itrain);
+title(sprintf('Select %d non-faces for the negative template',negnclick));
 [xx,yy] = ginput(negnclick);
 
 %compute 8x8 block in which the user clicked
 nblockx = round(xx/8);
 nblocky = round(yy/8); 
-figure(4);
+figure(4); clf;
 for i = 1:negnclick
   npatch = Itrain(8*nblocky(i)+(-63:64),8*nblockx(i)+(-63:64));
   figure(4); subplot(3,2,i); imshow(npatch);
@@ -63,10 +65,10 @@ end
 % now compute the average template for the negative examples
 negtemplate = zeros(16,16,9);
 % TODO -- not good enough. Maybe the issue is on the detect func
-% for i = 1:negnclick
-%   negtemplate = negtemplate + f(nblocky(i)+(-7:8),nblockx(i)+(-7:8),:);
-% end
-% negtemplate = negtemplate/negnclick;
+for i = 1:negnclick
+  negtemplate = negtemplate + f(nblocky(i)+(-7:8),nblockx(i)+(-7:8),:);
+end
+negtemplate = negtemplate/negnclick;
 
 % our final classifier is the difference between the positive
 % and negative averages
