@@ -56,7 +56,8 @@ end
 assert(all(pixelbincount(:)<=1),'every pixel should appear in only a single bin');
 
 % normalize the histogram so that sum over orientation bins is 1 for each block
-%   NOTE: Don't divide by 0! If there are no edges in a block (ie. this counts sums to 0 for the block) then just leave all the values 0. 
+%   NOTE: Don't divide by 0! If there are no edges in a block
+% (ie. this counts sums to 0 for the block) then just leave all the values 0. 
 
 for x = 1:h2
   for y = 1:w2

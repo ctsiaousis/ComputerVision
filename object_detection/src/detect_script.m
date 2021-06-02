@@ -8,7 +8,7 @@
 %
 
 % load a training example image
-Itrain = im2double(rgb2gray(imread('facetest/faces5.jpg')));
+Itrain = im2double(rgb2gray(imread('../data/faces2.jpg')));
 
 %have the user click on some training examples.  
 % If there is more than 1 example in the training image (e.g. faces), you could set nclicks higher here and average together
@@ -47,10 +47,26 @@ postemplate = postemplate/nclick;
 % examples.  (or alternately you can grab random locations
 % from an image that doesn't contain any instances of the
 % object you are trying to detect).
+negnclick = 2;
+figure(3);
+imshow(Itrain);
+[xx,yy] = ginput(negnclick);
 
-
+%compute 8x8 block in which the user clicked
+nblockx = round(xx/8);
+nblocky = round(yy/8); 
+figure(4);
+for i = 1:negnclick
+  npatch = Itrain(8*nblocky(i)+(-63:64),8*nblockx(i)+(-63:64));
+  figure(4); subplot(3,2,i); imshow(npatch);
+end
 % now compute the average template for the negative examples
 negtemplate = zeros(16,16,9);
+% TODO -- not good enough. Maybe the issue is on the detect func
+% for i = 1:negnclick
+%   negtemplate = negtemplate + f(nblocky(i)+(-7:8),nblockx(i)+(-7:8),:);
+% end
+% negtemplate = negtemplate/negnclick;
 
 % our final classifier is the difference between the positive
 % and negative averages
@@ -60,7 +76,7 @@ template = postemplate - negtemplate;
 %
 % load a test image
 %
-Itest= im2double(rgb2gray(imread('facetest/faces3.jpg')));
+Itest= im2double(rgb2gray(imread('../data/faces1.jpg')));
 
 
 % find top 8 detections in Itest
@@ -69,7 +85,7 @@ ndet = 8;
 ndet = length(x);
 
 %display top ndet detections
-figure(3); clf; imshow(Itest);
+figure(5); clf; imshow(Itest);
 for i = 1:ndet
   % draw a rectangle.  use color to encode confidence of detection
   %  top scoring are green, fading to red
