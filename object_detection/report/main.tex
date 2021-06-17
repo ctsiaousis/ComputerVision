@@ -1,0 +1,92 @@
+\documentclass[11pt]{scrartcl} % Font size
+
+\input{structure.tex} % Include the file specifying the document structure and custom commands
+\input{matlab.tex}
+
+\usepackage{fontspec}
+\setmainfont{Tinos Nerd Font} %nice font for english and greek
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \includegraphics[width=0.9\textwidth]{logo_tuc.png}\par\vspace{1cm}
+    \normalfont\normalsize
+    \textsc{\textcolor[rgb]{0.66, 0.09, 0.19}{Ηλεκτρολόγων Μηχανικών και Μηχανικών Υπολογιστών}}\\ % Your university, school and/or department name(s)
+    \vspace{25pt} % Whitespace
+    %\textcolor[rgb]{0.66, 0.09, 0.19}{\rule{\linewidth}{0.5pt}}
+    \rule{\linewidth}{0.5pt}\\ % Thin top horizontal rule
+    \vspace{20pt} % Whitespace
+    {\Huge Μηχανική Όραση}\\ % The assignment title
+
+    {\huge Αναφορά Τρίτου Project}\\ % The assignment title
+    \vspace{12pt} % Whitespace
+    \rule{\linewidth}{2pt}\\ % Thick bottom horizontal rule
+    \vspace{12pt} % Whitespace
+    \vspace{2cm}
+
+    {\LARGE{Τσιαούσης Χρήστος \hfill Μητσάκης Χαράλαμπος}
+        \par
+        \texttt{2016030017 \hfill 2006030075}
+        \par
+    }
+
+    \vfill
+    Διδάσκουσα
+
+    Ε. Δούτση
+
+    \vfill
+
+% Bottom of the page
+    {\large \today\par}
+\end{titlepage}
+
+\newpage
+
+
+
+\section{Εισαγωγή}
+
+\section{Αποτελέσματα}
+
+\subsection{Image Gradient}
+
+Καλώντας την mygradient ως εξής:
+
+\begin{verbatim}
+mygradient(im2double(rgb2gray(imread('../data/test3.jpg'))));
+\end{verbatim}
+
+παίρνουμε τα παρακάτω αποτελέσματα:
+
+\begin{figure}[H]
+  \includegraphics[width=16cm]{../output/1_mag.png}
+  \caption{magnitude}
+\end{figure}
+
+\begin{figure}[H]
+  \includegraphics[width=16cm]{../output/1_ori.png}
+  \caption{orientation}
+\end{figure}
+
+\subsection{Detection faces1.jpg}
+
+\subsubsection{Positive Template}
+
+\subsubsection{Negative Template}
+
+\subsubsection{Αποτελέσματα}
+
+\subsection{Detection faces2.jpg}
+
+\subsubsection{Positive Template}
+
+\subsubsection{Negative Template}
+
+\subsubsection{Αποτελέσματα}
+
+\section{Συμπεράσματα}
+
+
+\end{document}
