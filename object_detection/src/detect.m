@@ -15,7 +15,7 @@ nori = size(f,3);
 % cross-correlate template with feature map to get a total response
 R = zeros(size(f,1),size(f,2));
 for i = 1:nori
-  R = R + imfilter(f(:,:,i), template, 'replicate');
+  R = R + imfilter(f(:,:,i), template(i), 'replicate');
 end
 
 % now return locations of the top ndet detections

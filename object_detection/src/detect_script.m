@@ -48,7 +48,7 @@ postemplate = postemplate/nclick;
 % examples.  (or alternately you can grab random locations
 % from an image that doesn't contain any instances of the
 % object you are trying to detect).
-negnclick = 3;
+negnclick = nclick;
 figure(3); clf;
 imshow(Itrain);
 title(sprintf('Select %d non-faces for the negative template',negnclick));
