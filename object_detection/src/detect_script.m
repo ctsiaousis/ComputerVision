@@ -30,7 +30,7 @@ blocky = round(y/8);
 figure(2); clf;
 for i = 1:nclick
   patch = Itrain(8*blocky(i)+(-63:64),8*blockx(i)+(-63:64));
-  figure(2); subplot(3,2,i); imshow(patch);
+  figure(2); subplot(ceil(nclick/2),2,i); imshow(patch);
 end
 
 % compute the hog features
@@ -60,7 +60,7 @@ nblocky = round(yy/8);
 figure(4); clf;
 for i = 1:negnclick
   npatch = Itrain(8*nblocky(i)+(-63:64),8*nblockx(i)+(-63:64));
-  figure(4); subplot(3,2,i); imshow(npatch);
+  figure(4); subplot(ceil(negnclick/2),2,i); imshow(npatch);
 end
 % now compute the average template for the negative examples
 negtemplate = zeros(16,16,9);
