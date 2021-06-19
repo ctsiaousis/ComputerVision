@@ -8,11 +8,15 @@
 %
 
 % load a training example image
-Itrain = im2double(rgb2gray(imread('../data/faces2.jpg')));
-
+Itrain = im2double(rgb2gray(imread('../data/faces1.jpg')));
+% load test images (a similar image, a rotated image, a scaled image, and faces2.jpg)
+Itests = {im2double(rgb2gray(imread('../data/faces1_b.jpg'))), ...
+          rot90(im2double(rgb2gray(imread('../data/faces1_b.jpg')))), ...
+          imresize(im2double(rgb2gray(imread('../data/faces1_b.jpg'))), 2), ...
+          im2double(rgb2gray(imread('../data/faces2.jpg')))};
 %have the user click on some training examples.  
 % If there is more than 1 example in the training image (e.g. faces), you could set nclicks higher here and average together
-nclick = 5;
+nclick = 4;
 figure(1); clf;
 imshow(Itrain);
 title(sprintf('Select %d faces for the template',nclick));
@@ -75,23 +79,21 @@ negtemplate = negtemplate/negnclick;
 template = postemplate - negtemplate;
 
 
-%
-% load a test image
-%
-Itest= im2double(rgb2gray(imread('../data/faces1.jpg')));
+for j = [1:length(Itests)]
+  Itest = Itests{j};
 
+  % find top 8 detections in Itest
+  ndet = 8;
+  [x,y,score] = detect(Itest,template,ndet);
+  ndet = length(x);
 
-% find top 8 detections in Itest
-ndet = 8;
-[x,y,score] = detect(Itest,template,ndet);
-ndet = length(x);
-
-%display top ndet detections
-figure(5); clf; imshow(Itest);
-for i = 1:ndet
-  % draw a rectangle.  use color to encode confidence of detection
-  %  top scoring are green, fading to red
-  hold on; 
-  h = rectangle('Position',[x(i)-64 y(i)-64 128 128],'EdgeColor',[(i/ndet) ((ndet-i)/ndet)  0],'LineWidth',3,'Curvature',[0.3 0.3]); 
-  hold off;
+  %display top ndet detections
+  figure(5+j); clf; imshow(Itest);
+  for i = 1:ndet
+    % draw a rectangle.  use color to encode confidence of detection
+    %  top scoring are green, fading to red
+    hold on; 
+    h = rectangle('Position',[x(i)-64 y(i)-64 128 128],'EdgeColor',[(i/ndet) ((ndet-i)/ndet)  0],'LineWidth',3,'Curvature',[0.3 0.3]); 
+    hold off;
+  end
 end
