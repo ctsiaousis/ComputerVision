@@ -22,9 +22,10 @@ imshow(Itrain);
 title(sprintf('Select %d faces for the template',nclick));
 [x,y] = ginput(nclick); %get nclicks from the user
 
+block_size = 8;
 %compute 8x8 block in which the user clicked
-blockx = round(x/8);
-blocky = round(y/8); 
+blockx = round(x/block_size);
+blocky = round(y/block_size);
 
 %visualize image patch that the user clicked on
 % the patch shown will be the size of our template
@@ -33,7 +34,7 @@ blocky = round(y/8);
 % around the click location.
 figure; clf;
 for i = 1:nclick
-  patch = Itrain(8*blocky(i)+(-63:64),8*blockx(i)+(-63:64));
+  patch = Itrain(block_size*blocky(i)+(-block_size^2+1:block_size^2),block_size*blockx(i)+(-block_size^2+1:block_size^2));
   subplot(ceil(nclick/2),2,i); imshow(patch);
 end
 
@@ -42,9 +43,9 @@ f = hog(Itrain);
 figure; imshow(hogdraw(f))
 
 % compute the average template for the user clicks
-postemplate = zeros(16,16,9);
+postemplate = zeros(2*block_size,2*block_size,9);
 for i = 1:nclick
-  postemplate = postemplate + f(blocky(i)+(-7:8),blockx(i)+(-7:8),:); 
+  postemplate = postemplate + f(blocky(i)+(-block_size+1:block_size),blockx(i)+(-block_size+1:block_size),:);
 end
 postemplate = postemplate/nclick;
 
@@ -64,14 +65,14 @@ nblockx = round(x/8);
 nblocky = round(y/8);
 figure; clf;
 for i = 1:negnclick
-  npatch = Itrain(8*nblocky(i)+(-63:64),8*nblockx(i)+(-63:64));
+  npatch = Itrain(block_size*nblocky(i)+(-block_size^2+1:block_size^2),block_size*nblockx(i)+(-block_size^2+1:block_size^2));
   subplot(ceil(negnclick/2),2,i); imshow(npatch);
 end
 % now compute the average template for the negative examples
-negtemplate = zeros(16,16,9);
+negtemplate = zeros(2*block_size,2*block_size,9);
 % TODO -- not good enough. Maybe the issue is on the detect func
 for i = 1:negnclick
-  negtemplate = negtemplate + f(nblocky(i)+(-7:8),nblockx(i)+(-7:8),:);
+  negtemplate = negtemplate + f(nblocky(i)+(-block_size+1:block_size),nblockx(i)+(-block_size+1:block_size),:);
 end
 negtemplate = negtemplate/negnclick;
 
