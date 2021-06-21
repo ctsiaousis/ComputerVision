@@ -22,7 +22,6 @@ end
 
 % sort responses from high to low
 [val,ind] = sort(R(:),'descend');
-
 % work down the list of responses, removing overlapping detections as we go
 i = 1;
 detcount = 0;

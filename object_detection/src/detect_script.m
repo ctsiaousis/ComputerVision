@@ -17,7 +17,7 @@ Itests = {im2double(rgb2gray(imread('../data/faces1_b.jpg'))), ...
 %have the user click on some training examples.  
 % If there is more than 1 example in the training image (e.g. faces), you could set nclicks higher here and average together
 nclick = 4;
-figure(1); clf;
+figure; clf;
 imshow(Itrain);
 title(sprintf('Select %d faces for the template',nclick));
 [x,y] = ginput(nclick); %get nclicks from the user
@@ -31,14 +31,15 @@ blocky = round(y/8);
 % since the template will be 16x16 blocks and each
 % block is 8 pixels, visualize a 128pixel square 
 % around the click location.
-figure(2); clf;
+figure; clf;
 for i = 1:nclick
   patch = Itrain(8*blocky(i)+(-63:64),8*blockx(i)+(-63:64));
-  figure(2); subplot(ceil(nclick/2),2,i); imshow(patch);
+  subplot(ceil(nclick/2),2,i); imshow(patch);
 end
 
 % compute the hog features
 f = hog(Itrain);
+figure; imshow(hogdraw(f))
 
 % compute the average template for the user clicks
 postemplate = zeros(16,16,9);
@@ -53,7 +54,7 @@ postemplate = postemplate/nclick;
 % from an image that doesn't contain any instances of the
 % object you are trying to detect).
 negnclick = nclick;
-figure(3); clf;
+figure; clf;
 imshow(Itrain);
 title(sprintf('Select %d non-faces for the negative template',negnclick));
 [x,y] = ginput(negnclick);
@@ -61,10 +62,10 @@ title(sprintf('Select %d non-faces for the negative template',negnclick));
 %compute 8x8 block in which the user clicked
 nblockx = round(x/8);
 nblocky = round(y/8);
-figure(4); clf;
+figure; clf;
 for i = 1:negnclick
   npatch = Itrain(8*nblocky(i)+(-63:64),8*nblockx(i)+(-63:64));
-  figure(4); subplot(ceil(negnclick/2),2,i); imshow(npatch);
+  subplot(ceil(negnclick/2),2,i); imshow(npatch);
 end
 % now compute the average template for the negative examples
 negtemplate = zeros(16,16,9);
@@ -88,7 +89,7 @@ for j = [1:length(Itests)]
   ndet = length(x);
 
   %display top ndet detections
-  figure(5+j); clf; imshow(Itest);
+  figure; clf; imshow(Itest);
   for i = 1:ndet
     % draw a rectangle.  use color to encode confidence of detection
     %  top scoring are green, fading to red

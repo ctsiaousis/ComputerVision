@@ -23,8 +23,8 @@ ori = atan2(-dy, dx); % -dy gives us the same orientation as imgradient
 assert(all(size(mag)==size(I)),'gradient magnitudes should be same size as input image');
 assert(all(size(ori)==size(I)),'gradient orientations should be same size as input image');
 
-figure, imagesc(mag), title('magnitude');
-figure, imagesc(ori), title('orientation');
+% figure, imagesc(mag), title('magnitude');
+% figure, imagesc(ori), title('orientation');
 
 % % compare result with imgradient
 % [mag2, ori2] = imgradient(I, 'central');
