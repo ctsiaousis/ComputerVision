@@ -61,8 +61,8 @@ title(sprintf('Select %d non-faces for the negative template',negnclick));
 [x,y] = ginput(negnclick);
 
 %compute 8x8 block in which the user clicked
-nblockx = round(x/8);
-nblocky = round(y/8);
+nblockx = round(x/block_size);
+nblocky = round(y/block_size);
 figure; clf;
 for i = 1:negnclick
   npatch = Itrain(block_size*nblocky(i)+(-block_size^2+1:block_size^2),block_size*nblockx(i)+(-block_size^2+1:block_size^2));
