@@ -61,18 +61,18 @@ title(sprintf('Select %d non-faces for the negative template',negnclick));
 [x,y] = ginput(negnclick);
 
 %compute 8x8 block in which the user clicked
-nblockx = round(x/block_size);
-nblocky = round(y/block_size);
+blockx = round(x/block_size);
+blocky = round(y/block_size);
 figure; clf;
 for i = 1:negnclick
-  npatch = Itrain(block_size*nblocky(i)+(-block_size^2+1:block_size^2),block_size*nblockx(i)+(-block_size^2+1:block_size^2));
-  subplot(ceil(negnclick/2),2,i); imshow(npatch);
+  patch = Itrain(block_size*blocky(i)+(-block_size^2+1:block_size^2),block_size*blockx(i)+(-block_size^2+1:block_size^2));
+  subplot(ceil(negnclick/2),2,i); imshow(patch);
 end
 % now compute the average template for the negative examples
 negtemplate = zeros(2*block_size,2*block_size,9);
 % TODO -- not good enough. Maybe the issue is on the detect func
 for i = 1:negnclick
-  negtemplate = negtemplate + f(nblocky(i)+(-block_size+1:block_size),nblockx(i)+(-block_size+1:block_size),:);
+  negtemplate = negtemplate + f(blocky(i)+(-block_size+1:block_size),blockx(i)+(-block_size+1:block_size),:);
 end
 negtemplate = negtemplate/negnclick;
 
