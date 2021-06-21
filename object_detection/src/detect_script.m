@@ -95,7 +95,7 @@ for j = [1:length(Itests)]
     % draw a rectangle.  use color to encode confidence of detection
     %  top scoring are green, fading to red
     hold on; 
-    h = rectangle('Position',[x(i)-64 y(i)-64 128 128],'EdgeColor',[(i/ndet) ((ndet-i)/ndet)  0],'LineWidth',3,'Curvature',[0.3 0.3]); 
+    h = rectangle('Position',[x(i)-block_size^2 y(i)-block_size^2 2*block_size^2 2*block_size^2],'EdgeColor',[(i/ndet) ((ndet-i)/ndet)  0],'LineWidth',3,'Curvature',[0.3 0.3]);
     hold off;
   end
 end
