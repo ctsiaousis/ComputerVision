@@ -48,6 +48,20 @@
 
 \section{Εισαγωγή}
 
+Η συγκεκριμένη εργασία διερευνά την αναγνώριση αντικειμένων σε μια εικόνα
+βάσει της μεθοδολογίας Histogram of Oriented Gradients και Sliding Window Classification.
+
+Αποτελείται από τα παρακάτω μέρη:
+\begin{itemize}
+  \item \textbf{Gradient Generation} Η συνάρτηση \texttt{mygradient} παράγει τις κλίσεις των
+  magnitude και orientation για κάθε pixel της εικόνας εισόδου.
+  \item \textbf{Histogram of Oriented Gradients} Η συνάρτηση \texttt{hog} παράγει τα orientation
+  histograms για κάθε 8x8 superpixel της εικόνας εισόδου.
+  \item \textbf{Template Detection} Η συνάρτηση \texttt{detect} δέχεται μία εικόνα εισόδου καθώς
+  και κάποια template θετικών κι αρνητικών match. Επιστρέφει της συντεταγμένες και τα σκορ για
+  τα καλύτερα matches που βρήκε.
+\end{itemize}
+
 \section{Αποτελέσματα}
 
 \subsection{Image Gradient}
