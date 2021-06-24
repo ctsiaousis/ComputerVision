@@ -58,12 +58,12 @@
   \item \textbf{Histogram of Oriented Gradients} Η συνάρτηση \texttt{hog} παράγει τα orientation
   histograms για κάθε 8x8 superpixel της εικόνας εισόδου.
   \item \textbf{Template Detection} Η συνάρτηση \texttt{detect} δέχεται μία εικόνα εισόδου καθώς
-  και κάποια template θετικών κι αρνητικών match. Επιστρέφει της συντεταγμένες και τα σκορ για
+  και κάποια template θετικών κι αρνητικών match. Επιστρέφει τις συντεταγμένες και τα σκορ για
   τα καλύτερα matches που βρήκε.
 \end{itemize}
 
 \section{Αποτελέσματα}
-Παρατηρήθηκε πως το sliding window classification λειτουργεί καλά αν τα feature που έχουν οριστεί
+Παρατηρήθηκε πως το sliding window classification λειτουργεί καλά αν τα features που έχουν οριστεί
 στο θετικό template του training set βρίσκονται σε παρόμοιο μέγεθος στο testing set. Δηλαδή, αν
 και το HOG για τα block 8x8 παράγει orientation independent identities για κάθε block, πρέπει το
 feature να κάνει καλό fit στις περιοχές που διαλέγονται στο train έτσι ώστε να γίνεται έλεγχος
