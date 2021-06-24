@@ -8,37 +8,44 @@
 %
 
 % load a training example image
-Itrain = im2double(rgb2gray(imread('facetest/faces5.jpg')));
-
+Itrain = im2double(rgb2gray(imread('../data/faces1.jpg')));
+% load test images (a similar image, a rotated image, a scaled image, and faces2.jpg)
+Itests = {im2double(rgb2gray(imread('../data/faces1_b.jpg'))), ...
+          rot90(im2double(rgb2gray(imread('../data/faces1_b.jpg')))), ...
+          imresize(im2double(rgb2gray(imread('../data/faces1_b.jpg'))), 2), ...
+          im2double(rgb2gray(imread('../data/faces2.jpg')))};
 %have the user click on some training examples.  
 % If there is more than 1 example in the training image (e.g. faces), you could set nclicks higher here and average together
-nclick = 5;
-figure(1); clf;
+nclick = 4;
+figure; clf;
 imshow(Itrain);
+title(sprintf('Select %d faces for the template',nclick));
 [x,y] = ginput(nclick); %get nclicks from the user
 
+block_size = 8;
 %compute 8x8 block in which the user clicked
-blockx = round(x/8);
-blocky = round(y/8); 
+blockx = round(x/block_size);
+blocky = round(y/block_size);
 
 %visualize image patch that the user clicked on
 % the patch shown will be the size of our template
 % since the template will be 16x16 blocks and each
 % block is 8 pixels, visualize a 128pixel square 
 % around the click location.
-figure(2); clf;
+figure; clf;
 for i = 1:nclick
-  patch = Itrain(8*blocky(i)+(-63:64),8*blockx(i)+(-63:64));
-  figure(2); subplot(3,2,i); imshow(patch);
+  patch = Itrain(block_size*blocky(i)+(-block_size^2+1:block_size^2),block_size*blockx(i)+(-block_size^2+1:block_size^2));
+  subplot(ceil(nclick/2),2,i); imshow(patch);
 end
 
 % compute the hog features
 f = hog(Itrain);
+figure; imshow(hogdraw(f))
 
 % compute the average template for the user clicks
-postemplate = zeros(16,16,9);
+postemplate = zeros(2*block_size,2*block_size,9);
 for i = 1:nclick
-  postemplate = postemplate + f(blocky(i)+(-7:8),blockx(i)+(-7:8),:); 
+  postemplate = postemplate + f(blocky(i)+(-block_size+1:block_size),blockx(i)+(-block_size+1:block_size),:);
 end
 postemplate = postemplate/nclick;
 
@@ -47,33 +54,48 @@ postemplate = postemplate/nclick;
 % examples.  (or alternately you can grab random locations
 % from an image that doesn't contain any instances of the
 % object you are trying to detect).
+negnclick = nclick;
+figure; clf;
+imshow(Itrain);
+title(sprintf('Select %d non-faces for the negative template',negnclick));
+[x,y] = ginput(negnclick);
 
-
+%compute 8x8 block in which the user clicked
+blockx = round(x/block_size);
+blocky = round(y/block_size);
+figure; clf;
+for i = 1:negnclick
+  patch = Itrain(block_size*blocky(i)+(-block_size^2+1:block_size^2),block_size*blockx(i)+(-block_size^2+1:block_size^2));
+  subplot(ceil(negnclick/2),2,i); imshow(patch);
+end
 % now compute the average template for the negative examples
-negtemplate = zeros(16,16,9);
+negtemplate = zeros(2*block_size,2*block_size,9);
+% TODO -- not good enough. Maybe the issue is on the detect func
+for i = 1:negnclick
+  negtemplate = negtemplate + f(blocky(i)+(-block_size+1:block_size),blockx(i)+(-block_size+1:block_size),:);
+end
+negtemplate = negtemplate/negnclick;
 
 % our final classifier is the difference between the positive
 % and negative averages
 template = postemplate - negtemplate;
 
 
-%
-% load a test image
-%
-Itest= im2double(rgb2gray(imread('facetest/faces3.jpg')));
+for j = [1:length(Itests)]
+  Itest = Itests{j};
 
+  % find top 8 detections in Itest
+  ndet = 8;
+  [x,y,score] = detect(Itest,template,ndet);
+  ndet = length(x);
 
-% find top 8 detections in Itest
-ndet = 8;
-[x,y,score] = detect(Itest,template,ndet);
-ndet = length(x);
-
-%display top ndet detections
-figure(3); clf; imshow(Itest);
-for i = 1:ndet
-  % draw a rectangle.  use color to encode confidence of detection
-  %  top scoring are green, fading to red
-  hold on; 
-  h = rectangle('Position',[x(i)-64 y(i)-64 128 128],'EdgeColor',[(i/ndet) ((ndet-i)/ndet)  0],'LineWidth',3,'Curvature',[0.3 0.3]); 
-  hold off;
+  %display top ndet detections
+  figure; clf; imshow(Itest);
+  for i = 1:ndet
+    % draw a rectangle.  use color to encode confidence of detection
+    %  top scoring are green, fading to red
+    hold on; 
+    h = rectangle('Position',[x(i)-block_size^2 y(i)-block_size^2 2*block_size^2 2*block_size^2],'EdgeColor',[(i/ndet) ((ndet-i)/ndet)  0],'LineWidth',3,'Curvature',[0.3 0.3]);
+    hold off;
+  end
 end

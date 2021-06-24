@@ -1,0 +1,151 @@
+\documentclass[11pt]{scrartcl} % Font size
+
+\input{structure.tex} % Include the file specifying the document structure and custom commands
+\input{matlab.tex}
+
+\usepackage{fontspec}
+\setmainfont{Tinos Nerd Font} %nice font for english and greek
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \includegraphics[width=0.9\textwidth]{logo_tuc.png}\par\vspace{1cm}
+    \normalfont\normalsize
+    \textsc{\textcolor[rgb]{0.66, 0.09, 0.19}{Ηλεκτρολόγων Μηχανικών και Μηχανικών Υπολογιστών}}\\ % Your university, school and/or department name(s)
+    \vspace{25pt} % Whitespace
+    %\textcolor[rgb]{0.66, 0.09, 0.19}{\rule{\linewidth}{0.5pt}}
+    \rule{\linewidth}{0.5pt}\\ % Thin top horizontal rule
+    \vspace{20pt} % Whitespace
+    {\Huge Μηχανική Όραση}\\ % The assignment title
+
+    {\huge Αναφορά Τρίτου Project}\\ % The assignment title
+    \vspace{12pt} % Whitespace
+    \rule{\linewidth}{2pt}\\ % Thick bottom horizontal rule
+    \vspace{12pt} % Whitespace
+    \vspace{2cm}
+
+    {\LARGE{Τσιαούσης Χρήστος \hfill Μητσάκης Χαράλαμπος}
+        \par
+        \texttt{2016030017 \hfill 2006030075}
+        \par
+    }
+
+    \vfill
+    Διδάσκουσα
+
+    Ε. Δούτση
+
+    \vfill
+
+% Bottom of the page
+    {\large \today\par}
+\end{titlepage}
+
+\newpage
+
+
+
+\section{Εισαγωγή}
+
+Η συγκεκριμένη εργασία διερευνά την αναγνώριση αντικειμένων σε μια εικόνα
+βάσει της μεθοδολογίας Histogram of Oriented Gradients και Sliding Window Classification.
+
+Αποτελείται από τα παρακάτω μέρη:
+\begin{itemize}
+  \item \textbf{Gradient Generation} Η συνάρτηση \texttt{mygradient} παράγει τις κλίσεις των
+  magnitude και orientation για κάθε pixel της εικόνας εισόδου.
+  \item \textbf{Histogram of Oriented Gradients} Η συνάρτηση \texttt{hog} παράγει τα orientation
+  histograms για κάθε 8x8 superpixel της εικόνας εισόδου.
+  \item \textbf{Template Detection} Η συνάρτηση \texttt{detect} δέχεται μία εικόνα εισόδου καθώς
+  και κάποια template θετικών κι αρνητικών match. Επιστρέφει τις συντεταγμένες και τα σκορ για
+  τα καλύτερα matches που βρήκε.
+\end{itemize}
+
+\section{Αποτελέσματα}
+Παρατηρήθηκε πως το sliding window classification λειτουργεί καλά αν τα features που έχουν οριστεί
+στο θετικό template του training set βρίσκονται σε παρόμοιο μέγεθος στο testing set. Δηλαδή, αν
+και το HOG για τα block 8x8 παράγει orientation independent identities για κάθε block, πρέπει το
+feature να κάνει καλό fit στις περιοχές που διαλέγονται στο train έτσι ώστε να γίνεται έλεγχος
+ομοιότητας στο test έχοντας παρόμοια 8 block σε κάθε window (8 block των 8x8 δίνουν παράθυρο 64x64).
+
+\subsection{Image Gradient}
+
+Καλώντας την mygradient ως εξής:
+
+\begin{verbatim}
+mygradient(im2double(rgb2gray(imread('../data/faces1.jpg'))));
+\end{verbatim}
+
+παίρνουμε τα παρακάτω αποτελέσματα:
+
+\begin{figure}[H]
+  \includegraphics[width=16cm]{../output/1_mag.jpg}
+  \caption{magnitude}
+\end{figure}
+
+\begin{figure}[H]
+  \includegraphics[width=16cm]{../output/1_ori.jpg}
+  \caption{orientation}
+\end{figure}
+
+\begin{figure}[H]
+  \includegraphics[width=16cm]{../output/1_hogDraw.jpg}
+  \caption{HOG draw}
+\end{figure}
+
+\subsection{Detection}
+Για το detection υπάρχει μία training εικόνα στην οποία διαλέγουμε 4 windows (μεγέθους
+64x64) τα οποία θα είναι το θετικό template και βάσει αυτών θα ``ψάχνει'' matches
+ο classifier.
+
+\begin{figure}[H]
+  \includegraphics[width=16cm]{../output/3_positive.jpg}
+  \caption{positive template}
+\end{figure}
+
+Όμοια, διαλέγουμε και 4 παράθυρα για το αρνητικό template.
+
+\begin{figure}[H]
+  \includegraphics[width=16cm]{../output/3_negative.jpg}
+  \caption{negative template}
+\end{figure}
+
+Παρακάτω φαίνεται πως η αναγνώριση είναι ανεξάρτητη orientation αλλά εξαρτημένη του scaling factor.
+
+\begin{figure}[H]
+  \includegraphics[width=16cm,trim={0 2.5cm 0 2.5cm},clip]{../output/3_result_1.jpg}
+  \caption{faces\_1b.jpg}
+\end{figure}
+
+\begin{figure}[H]
+  \includegraphics[width=16cm]{../output/3_result_2.jpg}
+  \caption{faces\_1b.jpg rotated $90^{\circ}$}
+\end{figure}
+
+\begin{figure}[H]
+  \includegraphics[width=16cm,trim={0 2.5cm 0 2.5cm},clip]{../output/3_result_3.jpg}
+  \caption{faces\_1b.jpg scaled x2}
+\end{figure}
+
+\begin{figure}[H]
+  \includegraphics[width=16cm]{../output/3_result_4.jpg}
+  \caption{faces2.jpg}
+\end{figure}
+
+\section{Συμπεράσματα}
+
+Φαίνεται η μέθοδος να μην επιρρεάζεται από το orientation των αντικειμένων αλλά
+δεν αναγνωρίζει απόλυτα templates διαφορετικού μεγέθους. Για να αντιμετοπιστεί
+το πρόβλημα αυτό θα μπορούσαν να εφαρμοστούν ποικίλες υλοποιήσεις. Για παράδειγμα,
+κάποιος θα μπορούσε να δημιουργήσει ένα \textbf{array από scaling factors} έτσι
+ώστε να δημιουργηθούν διάφορα training sets, όπου τα επιλεγμένα feature του χρήστη
+επιλέγονται και σε διαφορετικά scales με αποτέλεσμα να γίνει η αναγνώριση invariant
+από το μέγεθος του εκάστοτε feature στο testing set. Μια άλλη ιδέα θα ήταν να χρησιμοποιήσουμε
+διαφορετική μέθοδο classification. Αφού τα labels είναι μόνο δύο (match/όχι match)
+θα μπορούσαμε να υλοποιήσουμε εκπαίδευση με κάποιο SupportVectorMachine για καλύτερο
+διαχωρισμό των κλάσεων.
+
+
+
+\end{document}
